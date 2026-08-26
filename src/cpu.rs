@@ -22,7 +22,17 @@ impl Cpu {
     }
 
 // instruction set
-    pub fn add(&mut self, instruction: Instruction) {
+    pub fn execute(&mut self, instruction: Instruction){
+        match instruction.instruction_type{
+            InstructionType::Add => self.add(instruction),
+            InstructionType::Addi => self.addi(instruction),
+            InstructionType::Unknown => {
+                println!("unknown instruction: opcode {} xo {}", 
+                    instruction.opcode, instruction.xo);
+            }
+        }
+    }
+    fn add(&mut self, instruction: Instruction) {
         let rd = instruction.rd as usize;
         let ra = instruction.ra as usize;
         let rb = instruction.rb as usize;
@@ -30,7 +40,7 @@ impl Cpu {
         self.gpr[rd] = 
             self.gpr[ra].wrapping_add(self.gpr[rb]);
     }
-    pub fn addi(&mut self, instruction: Instruction) {
+    fn addi(&mut self, instruction: Instruction) {
         let rd = instruction.rd as usize;
         let ra = instruction.ra as usize;
         self.gpr[rd] = 

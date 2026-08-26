@@ -20,11 +20,11 @@ fn main() {
     
     let value = cpu.fetch(&ram);
     let instruct = decode(value);
-    cpu.add(instruct);
+    cpu.execute(instruct);
 
     let value = cpu.fetch(&ram);
     let instruct = decode(value);
-    cpu.addi(instruct);
+    cpu.execute(instruct);
 
     assert_eq!(cpu.gpr[3],75);
     assert_eq!(cpu.gpr[6],175);
