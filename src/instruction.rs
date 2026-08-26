@@ -4,6 +4,7 @@ pub enum InstructionType {
     Unknown,
     Addi,
     Add,
+    Subf,
 }
 
 pub struct Instruction {
@@ -43,11 +44,11 @@ pub fn decode(value: u32) -> Instruction {
            let ra = (value >> 16) & 0x1f;
            let rb = (value >> 11) & 0x1f;
            let xo = (value >>1) & 0x3ff;
-           let instruction_type = if xo == 266 {
-               InstructionType::Add
-           } else {
-                println!("{} is unknown", xo);
-                InstructionType::Unknown
+           let instruction_type = match xo{
+
+               266 => InstructionType::Add,
+               40 => InstructionType::Subf,
+               _ => InstructionType::Unknown
            };
 
            Instruction {
