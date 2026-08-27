@@ -1,44 +1,44 @@
 pub enum Instruction {
     Add {
-        rd: usize,
-        ra: usize,
-        rb: usize,
+        rd: u32,
+        ra: u32,
+        rb: u32,
     },
 
     Addi {
-        rd: usize,
-        ra: usize,
+        rd: u32,
+        ra: u32,
         immediate: i32,
     },
 
     Subf {
-        rd: usize,
-        ra: usize,
-        rb: usize,
+        rd: u32,
+        ra: u32,
+        rb: u32,
     },
 
     And {
-        rd: usize,
-        ra: usize,
-        rb: usize,
+        rd: u32,
+        ra: u32,
+        rb: u32,
     },
 
     Or {
-        rd: usize,
-        ra: usize,
-        rb: usize,
+        rd: u32,
+        ra: u32,
+        rb: u32,
     },
 
     Xor {
-        rd: usize,
-        ra: usize,
-        rb: usize,
+        rd: u32,
+        ra: u32,
+        rb: u32,
     },
 
     Cmp {
-        bf: usize,
-        ra: usize,
-        rb: usize,
+        bf: u32,
+        ra: u32,
+        rb: u32,
     },
 
     B {
@@ -59,8 +59,8 @@ pub fn decode(value: u32) -> Instruction {
 
     match opcode {
         14 => {
-            let rd = ((value >> 21) & 0x1F) as usize ;
-            let ra = ((value >> 16) & 0x1F) as usize;
+            let rd = (value >> 21) & 0x1F;
+            let ra = (value >> 16) & 0x1F;
             let immediate = (value & 0xFFFF) as u16 as i16 as i32;
 
             Instruction::Addi {
@@ -71,14 +71,14 @@ pub fn decode(value: u32) -> Instruction {
         }
 
         31 => {
-            let rd = ((value >> 21) & 0x1F) as usize;
-            let ra = ((value >> 16) & 0x1F) as usize;
-            let rb = ((value >> 11) & 0x1F) as usize;
+            let rd = (value >> 21) & 0x1F;
+            let ra = (value >> 16) & 0x1F;
+            let rb = (value >> 11) & 0x1F;
             let xo = (value >> 1) & 0x3FF;
 
             match xo {
                 0 => {
-                    let bf = (rd >> 2) as usize;
+                    let bf = rd >> 2;
 
                     Instruction::Cmp {
                         bf,
@@ -102,16 +102,10 @@ pub fn decode(value: u32) -> Instruction {
         }
 
         18 => {
-            let li = ((value >> 2) & 0x0FF_FFFF) as u32;
-            let li = ((li << 8) as i32) >> 8;
-            let aa = ((value >> 1) & 0x1) != 0;
-            let lk = (value & 0x1) != 0 ;
-            Instruction::B { li,
-            aa,
-            lk, }
+            // B-form — we'll fill this in  
+            todo!()
         }
 
         _ => Instruction::Unknown,
     }
 }
-
