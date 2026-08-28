@@ -38,30 +38,65 @@ impl Cpu {
     pub fn execute(&mut self, instruction: Instruction) -> bool {
         match instruction{
             Instruction::Add {rd, ra, rb }=> {
-                self.add(rd, ra, rb);
+                self.gpr[rd] = 
+            self.gpr[ra].wrapping_add(self.gpr[rb]);
+
                 false
             }
             Instruction::Addi { rd, ra, immediate }=> {
-                self.addi(rd, ra, immediate);
+                self.gpr[rd] = self.gpr[ra].wrapping_add(immediate as u32);
+                false
+            }
+            Instruction::Addis { rd, ra, immediate } => {
+                self.gpr[rd] = self.gpr[ra].wrapping_add((immediate << 16) as u32);
                 false
             }
             Instruction::Subf { rd, ra, rb } => {
-                self.subf(rd, ra, rb); 
+                self.gpr[rd] = self.gpr[rb].wrapping_sub(self.gpr[ra]);
                 false
             }
 
             Instruction::And { rd, ra, rb } => {
-                self.and(rd, ra, rb);
+                self.gpr[rd] = self.gpr[ra] & self.gpr[rb];
+                false
+            }
+            Instruction::Andi { rd, ra, immediate } => {
+                self.gpr[rd] = self.gpr[ra] & immediate as u32;
+                self.set_cr0(self.gpr[rd]);
+                false
+            }
+            Instruction::Andis {rd, ra, immediate} => {
+                self.gpr[rd] = self.gpr[ra] & ((immediate as u32) << 16);
+                self.set_cr0(self.gpr[rd]);
                 false
             }
 
             Instruction::Or { rd, ra, rb } =>{
-                self.or(rd, ra, rb);
+                self.gpr[rd] = self.gpr[ra] | self.gpr[rb];
+                false
+            }
+
+            Instruction::Ori { rd, ra, immediate } => {
+                self.gpr[rd] = self.gpr[ra] | immediate as u32;
+                false
+            }
+            Instruction::Oris { rd, ra, immediate } => {
+                self.gpr[rd] = self.gpr[ra] | ((immediate as u32) << 16 ) ;
                 false
             }
 
             Instruction::Xor { rd, ra, rb } =>{
-                self.xor(rd, ra, rb);
+                self.gpr[rd] = self.gpr[ra] ^ self.gpr[rb];
+                false
+            }
+
+            Instruction::Xori { rd, ra, immediate } => {
+                self.gpr[rd] = self.gpr[ra] ^ immediate as u32;
+                false
+            }
+
+            Instruction::Xoris { rd, ra, immediate } => {
+                self.gpr[rd] = self.gpr[ra] ^ ((immediate as u32) << 16);
                 false
             }
 
@@ -80,27 +115,19 @@ impl Cpu {
             }
         }
     }
-    fn add(&mut self, rd: usize, ra: usize, rb: usize) {
+    fn set_cr0(&mut self, result: u32) {
+        // set CR0 from result
+        let cr_val = if (result as i32) < 0 {
+            0b1000
+        } else if result != 0 {
+            0b0100
+        } else {
+            0b0010
+        };
 
-        self.gpr[rd] = 
-            self.gpr[ra].wrapping_add(self.gpr[rb]);
-    }
-    fn addi(&mut self, rd:usize, ra:usize, immediate:i32) {
-        self.gpr[rd] = 
-            self.gpr[ra].wrapping_add(immediate as u32);
-    }
-    fn subf(&mut self,rd:usize, ra:usize, rb:usize){
-        self.gpr[rd] = 
-            self.gpr[rb].wrapping_sub(self.gpr[ra]);
-    }
-    fn and(&mut self,rd:usize, ra:usize, rb:usize) {
-        self.gpr[rd] = self.gpr[ra] & self.gpr[rb];
-    }
-    fn or(&mut self,rd:usize, ra:usize, rb:usize) {
-        self.gpr[rd] = self.gpr[ra] | self.gpr[rb];
-    } 
-    fn xor(&mut self, rd:usize, ra:usize, rb:usize) {
-        self.gpr[rd] = self.gpr[ra] ^ self.gpr[rb];
+        self.cr &= !(0xF << 28);
+        self.cr |= cr_val << 28;
+
     }
     fn cmp(&mut self, bf:usize, ra:usize, rb:usize){
         let shift = (7 - bf) * 4;
