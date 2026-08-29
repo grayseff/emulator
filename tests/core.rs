@@ -22,13 +22,15 @@ fn arithmetic() {
     ram.write32(0x00 , 0x7C742A14); // add r3,r20,r5 
     ram.write32(0x04, 0x38c30064); //addi r6,r3,100
     ram.write32(0x08, 0x7CE5a050); // subf r7,r20,r5
-    for _ in 0..3{
-        cpu.step(&ram);
+    ram.write32(0x0c, 0x3d140001); //addis r8,r20,1
+    for _ in 0..4{
+        cpu.step(&mut ram);
     }
     assert_eq!(cpu.gpr[3],75);
     assert_eq!(cpu.gpr[6],175);
     assert_eq!(cpu.gpr[7],25);
-    assert_eq!(cpu.pc,12);
+    assert_eq!(cpu.gpr[8],65586);
+    assert_eq!(cpu.pc,16);
 }
 
 #[test]
@@ -41,9 +43,18 @@ fn logical_and_compare() {
     ram.write32(0x0C, 0x7c15b000); // cmp <
     ram.write32(0x10, 0x7c942800); // cmp >
     ram.write32(0x14, 0x7d14a000); // cmp =
+    ram.write32(0x18, 0x6174000C); // ori  r11,r20,12
+    ram.write32(0x1C,0x6594000C); // oris r12,r20,12
+    ram.write32(0x20, 0x69B4000C); // xori r13,r20,12
+    ram.write32(0x24, 0x6DD4000C); // xoris r14,r20,12
 
-    for _ in 0..6 {
-        cpu.step(&ram);
+
+    ram.write32(0x28, 0x71F40032); // andi. r15,r20,0x32
+    ram.write32(0x2C, 0x77F40032); // andis. r16,r20,0x32    
+
+
+    for _ in 0.. 10{
+        cpu.step(&mut ram);
     }
 
     // assert CR fields
@@ -51,7 +62,23 @@ fn logical_and_compare() {
     assert_eq!(cpu.gpr[8], 8);
     assert_eq!(cpu.gpr[9], 14);
     assert_eq!(cpu.gpr[10], 6);
-    assert_eq!(cpu.pc, 24);
+    assert_eq!(cpu.pc, 40);
+    assert_eq!(cpu.gpr[11], 62);
+    assert_eq!(cpu.gpr[12], 786482);
+    assert_eq!(cpu.gpr[13], 62);
+    assert_eq!(cpu.gpr[14], 786482);
+
+
+
+    cpu.step(&mut ram);
+    assert_eq!(cpu.gpr[15], 50);
+    assert_eq!((cpu.cr >> 28) & 0xF, 0b0100); // GT
+
+    cpu.step(&mut ram); // ANDIS.
+    assert_eq!(cpu.gpr[16], 0);
+    assert_eq!((cpu.cr >> 28) & 0xF, 0b0010); // EQ
+
+    assert_eq!(cpu.pc, 0x30);
 
 }
 
@@ -67,11 +94,11 @@ fn branch_test() {
 
     ram.write32(0x30, 0x7c742a14);
 
-    cpu.step(&ram);
+    cpu.step(&mut ram);
     assert_eq!(cpu.pc, 0x18);
-    cpu.step(&ram);
+    cpu.step(&mut ram);
     assert_eq!(cpu.pc, 0x30);
-    cpu.step(&ram);
+    cpu.step(&mut ram);
     assert_eq!(cpu.gpr[3], 75);
     assert_eq!(cpu.pc,0x34);
 }

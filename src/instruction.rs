@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub enum Instruction {
     Add {
         rd: usize,
@@ -82,7 +83,22 @@ pub enum Instruction {
         aa: bool,
         lk: bool,
     },
-
+    Lbz  { rd: usize, ra: usize, immediate: i32 },
+    Lbzu { rd: usize, ra: usize, immediate: i32 },
+    Lhz  { rd: usize, ra: usize, immediate: i32 },
+    Lhzu { rd: usize, ra: usize, immediate: i32 },
+    Lha  { rd: usize, ra: usize, immediate: i32 },
+    Lhau { rd: usize, ra: usize, immediate: i32 },
+    Lwz  { rd: usize, ra: usize, immediate: i32 },
+    Lwzu { rd: usize, ra: usize, immediate: i32 },
+    
+    Stb  { rs: usize, ra: usize, immediate: i32 },
+    Stbu { rs: usize, ra: usize, immediate: i32 },
+    Sth  { rs: usize, ra: usize, immediate: i32 },
+    Sthu { rs: usize, ra: usize, immediate: i32 },
+    Stw  { rs: usize, ra: usize, immediate: i32 },
+    Stwu { rs: usize, ra: usize, immediate: i32 },
+    
     Unknown,
 }
 
@@ -185,7 +201,29 @@ pub fn decode(value: u32) -> Instruction {
             aa,
             lk, }
         }
-
+    32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 => {
+        let rd = ((value >> 21) & 0x1F) as usize;
+        let ra = ((value >> 16) & 0x1F) as usize;
+        let immediate = (value & 0xFFFF) as u16 as i16 as i32;
+    
+        match opcode {
+            32 => Instruction::Lwz { rd, ra, immediate },
+            33 => Instruction::Lwzu { rd, ra, immediate },
+            34 => Instruction::Lbz { rd, ra, immediate },
+            35 => Instruction::Lbzu { rd, ra, immediate },
+            36 => Instruction::Stw { rs: rd, ra, immediate },
+            37 => Instruction::Stwu { rs: rd, ra, immediate },
+            38 => Instruction::Stb { rs: rd, ra, immediate },
+            39 => Instruction::Stbu { rs: rd, ra, immediate },
+            40 => Instruction::Lhz { rd, ra, immediate },
+            41 => Instruction::Lhzu { rd, ra, immediate },
+            42 => Instruction::Lha { rd, ra, immediate },
+            43 => Instruction::Lhau { rd, ra, immediate },
+            44 => Instruction::Sth { rs: rd, ra, immediate },
+            45 => Instruction::Sthu { rs: rd, ra, immediate },
+            _ => Instruction::Unknown,
+        }
+    }
         _ => Instruction::Unknown,
     }
 }

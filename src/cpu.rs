@@ -25,17 +25,17 @@ impl Cpu {
         }
     }
 
-    pub fn step(&mut self, memory: &Memory) {
+    pub fn step(&mut self, memory: &mut Memory) {
         let value = memory.read32(self.pc);
         let instruction = decode(value);
-        let pc_changed = self.execute(instruction);
+        let pc_changed = self.execute(instruction, memory);
 
         if !pc_changed {
             self.pc += 4
         }
     }
 // instruction set
-    pub fn execute(&mut self, instruction: Instruction) -> bool {
+    pub fn execute(&mut self, instruction: Instruction, memory: &mut Memory) -> bool {
         match instruction{
             Instruction::Add {rd, ra, rb }=> {
                 self.gpr[rd] = 
@@ -109,6 +109,100 @@ impl Cpu {
                 self.branch(li, aa, lk);
                 true
             }
+
+            Instruction::Lwz { rd, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        self.gpr[rd] = memory.read32(address);
+		        false
+		    }
+		
+		    Instruction::Lwzu { rd, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        self.gpr[rd] = memory.read32(address);
+		        self.gpr[ra] = address;
+		        false
+		    }
+		
+		    Instruction::Stw { rs, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        memory.write32(address, self.gpr[rs]);
+		        false
+		    }
+		    
+		    Instruction::Stwu { rs, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        memory.write32(address, self.gpr[rs]);
+		        self.gpr[ra] = address;
+		        false
+		    } 
+		    Instruction::Lbz { rd, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        self.gpr[rd] = memory.read8(address) as u32;
+		        false
+		    }
+		    
+		    Instruction::Lbzu { rd, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        self.gpr[rd] = memory.read8(address) as u32;
+		        self.gpr[ra] = address;
+		        false
+		    }
+		    
+		    Instruction::Lhz { rd, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        self.gpr[rd] = memory.read16(address) as u32;
+		        false
+		    }
+		    
+		    Instruction::Lhzu { rd, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        self.gpr[rd] = memory.read16(address) as u32;
+		        self.gpr[ra] = address;
+		        false
+		    }
+		    
+		    Instruction::Lha { rd, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        self.gpr[rd] = memory.read16(address) as i16 as i32 as u32;
+		        false
+		    }
+		    
+		    Instruction::Lhau { rd, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        self.gpr[rd] = memory.read16(address) as i16 as i32 as u32;
+		        self.gpr[ra] = address;
+		        false
+		    }
+		    
+		    Instruction::Stb { rs, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        memory.write8(address, self.gpr[rs] as u8);
+		        false
+		    }
+		    
+		    Instruction::Stbu { rs, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        memory.write8(address, self.gpr[rs] as u8);
+		        self.gpr[ra] = address;
+		        false
+		    }
+		    
+		    Instruction::Sth { rs, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        memory.write16(address, self.gpr[rs] as u16);
+		        false
+		    }
+		    
+		    Instruction::Sthu { rs, ra, immediate } => {
+		        let address = self.gpr[ra].wrapping_add(immediate as u32);
+		        memory.write16(address, self.gpr[rs] as u16);
+		        self.gpr[ra] = address;
+		        false
+		    }
+
+
+
+
             Instruction::Unknown => {
                 println!("unknown instruction:");
                     false
