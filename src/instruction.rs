@@ -16,7 +16,11 @@ pub enum Instruction {
     Xoris { rd: usize, ra: usize, immediate: u16 },
 
     Cmp { bf: usize, ra: usize, rb: usize },
+    CMPL { bf: usize, ra: usize, rb: usize },
     B { li: i32, aa: bool, lk: bool },
+    BC { bo: u8, bi: u8, bd: i32, aa: bool, lk: bool },
+    BCLR { bo: u8, bi: u8, bh: u8, lk: bool },
+
     Lbz  { rd: usize, ra: usize, immediate: i32 },
     Lbzu { rd: usize, ra: usize, immediate: i32 },
     Lhz  { rd: usize, ra: usize, immediate: i32 },
@@ -75,7 +79,18 @@ pub fn decode(value: u32) -> Instruction {
                     if !rc && !l && !reserved { Instruction::Cmp { bf, ra, rb } }
                     else { Instruction::Unknown }
                 }
+                32 => {
+                    let bf = ((value >> 23) & 0x7) as usize;
+                    let l = ((value >> 21) & 0x1) != 0;
+                    let reserved = ((value >> 22) & 0x1) != 0;
+                
+                    if !rc && !l && !reserved {
+                        Instruction::CMPL { bf, ra, rb }
+                    } else {
+                        Instruction::Unknown
+                    }
 
+                }
                 40 => Instruction::Subf { rd, ra, rb, rc },
                 266 => Instruction::Add { rd, ra, rb, rc },
                 28 => Instruction::And { rd, ra, rb, rc },
@@ -85,6 +100,15 @@ pub fn decode(value: u32) -> Instruction {
                 _ => Instruction::Unknown,
             }
         }
+		16 => {
+		    let bo = ((value >> 21) & 0x1F) as u8;
+		    let bi = ((value >> 16) & 0x1F) as u8;
+		    let bd = ((value >> 2) & 0x3FFF) as i32;
+		    let aa = (value & 0x2) != 0;
+		    let lk = (value & 0x1) != 0;
+		
+		    Instruction::BC { bo, bi, bd, aa, lk }
+		}
 
         18 => {
             let li = ((value >> 2) & 0x0FF_FFFF) as u32;
@@ -93,6 +117,19 @@ pub fn decode(value: u32) -> Instruction {
             let lk = (value & 0x1) != 0;
             Instruction::B { li, aa, lk }
         }
+        19 => {
+            let bo = ((value >> 21) & 0x1F) as u8;
+            let bi = ((value >> 16) & 0x1F) as u8;
+            let bh = ((value >> 11) & 0x3) as u8;
+            let xo = ((value >> 1) & 0x3FF) as u16;
+            let lk = (value & 0x1) != 0;
+
+            match xo {
+                16 => Instruction::BCLR { bo, bi, bh, lk },
+                _ => Instruction::Unknown,
+            }
+        }
+
         32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 40 | 41 | 42 | 43 | 44 | 45 => {
             let rd = ((value >> 21) & 0x1F) as usize;
             let ra = ((value >> 16) & 0x1F) as usize;
