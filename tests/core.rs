@@ -1,4 +1,4 @@
-use emulator::cpu::Cpu;
+use emulator::cpu::{Cpu, XER_CA, XER_OV, XER_SO};
 use emulator::memory::Memory;
 use emulator::instruction::{Instruction,decode};
 
@@ -23,14 +23,16 @@ fn arithmetic() {
     ram.write32(0x04, 0x38c30064); //addi r6,r3,100
     ram.write32(0x08, 0x7CE5a050); // subf r7,r20,r5
     ram.write32(0x0c, 0x3d140001); //addis r8,r20,1
-    for _ in 0..4{
+    ram.write32(0x10, 0x7C742A15); // add. r3,r20,r5
+    for _ in 0..5{
         cpu.step(&mut ram);
     }
     assert_eq!(cpu.gpr[3],75);
     assert_eq!(cpu.gpr[6],175);
     assert_eq!(cpu.gpr[7],25);
     assert_eq!(cpu.gpr[8],65586);
-    assert_eq!(cpu.pc,16);
+    assert_eq!((cpu.cr >> 28) & 0xF, 0b0100); // GT
+    assert_eq!(cpu.pc,20);
 }
 
 #[test]
@@ -80,6 +82,36 @@ fn logical_and_compare() {
 
     assert_eq!(cpu.pc, 0x30);
 
+}
+
+#[test]
+fn cmp_copies_xer_summary_overflow() {
+    let (mut cpu, mut ram) = test_loader();
+    cpu.set_xer_so(true);
+    ram.write32(0x00, 0x7c14a000); // cmp cr0,r20,r20
+
+    cpu.step(&mut ram);
+
+    assert_eq!((cpu.cr >> 28) & 0xF, 0b0011); // EQ | SO
+}
+
+#[test]
+fn xer_flag_helpers_preserve_other_bits() {
+    let (mut cpu, _) = test_loader();
+    cpu.xer = 0x1234_5678;
+
+    cpu.set_xer_so(true);
+    cpu.set_xer_ov(true);
+    cpu.set_xer_ca(true);
+    assert!(cpu.xer_so());
+    assert!(cpu.xer_ov());
+    assert!(cpu.xer_ca());
+    assert_eq!(cpu.xer & (XER_SO | XER_OV | XER_CA), XER_SO | XER_OV | XER_CA);
+
+    cpu.set_xer_ov(false);
+    assert!(cpu.xer_so());
+    assert!(!cpu.xer_ov());
+    assert!(cpu.xer_ca());
 }
 
 #[test]
