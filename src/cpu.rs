@@ -151,6 +151,23 @@ impl Cpu {
                 self.branch(li, aa, lk);
             }
 
+            Instruction::BC {bo, bi, bd, aa, lk} => {
+                if self.branch_condition(bo, bi) {
+                    self.branch(bd,aa,lk);
+                }
+            }
+
+            Instruction::BCLR {bo, bi, bh: _, lk} => {
+                let target = self.lr;
+
+                if self.branch_condition(bo, bi) {
+                    if lk {
+                        self.lr = self.pc;
+                    }
+                    self.pc = target;
+                }
+            }
+
             Instruction::Lwz { rd, ra, immediate } => {
 		        let address = self.d_form_address(ra, immediate);
 		        self.gpr[rd] = memory.read32(address);
