@@ -134,3 +134,46 @@ fn branch_test() {
     assert_eq!(cpu.gpr[3], 75);
     assert_eq!(cpu.pc,0x34);
 }
+#[test]
+fn test_cmpl_unsigned() {
+    let (mut cpu, mut ram) = test_loader();
+
+    cpu.gpr[3] = 0xFFFF_FFFF;
+    cpu.gpr[4] = 1;
+
+    // cmpl cr0,r3,r4
+    ram.write32(0, 0x7C032040);
+
+    cpu.step(&mut ram);
+
+    // Unsigned: 0xFFFFFFFF > 1 → GT
+    assert_eq!((cpu.cr >> 28) & 0xF, 0b0100);
+}
+#[test]
+fn bc_test() {
+    let (mut cpu, mut ram) = test_loader();
+
+    cpu.cr |= 1 << 31; // CR0.LT = 1
+
+    // bc 12,0,+8
+    ram.write32(0x00, 0x41800008);
+
+    ram.write32(0x08, 0x48000000); // target: B . (or whatever harmless instruction)
+
+    cpu.step(&mut ram);
+
+    assert_eq!(cpu.pc, 0x08);
+}
+#[test]
+fn bclr_test() {
+    let (mut cpu, mut ram) = test_loader();
+
+    cpu.lr = 0x20;
+
+    // bclr 20,0
+    ram.write32(0x00, 0x4E800020);
+
+    cpu.step(&mut ram);
+
+    assert_eq!(cpu.pc, 0x20);
+}
