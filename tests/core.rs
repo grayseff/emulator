@@ -177,3 +177,32 @@ fn bclr_test() {
 
     assert_eq!(cpu.pc, 0x20);
 }
+#[test]
+fn test_mtspr() {
+    let (mut cpu, mut ram) = test_loader();
+
+    cpu.gpr[3] = 0x12345678;
+
+    // mtctr r3
+    ram.write32(0x00, 0x7C6903A6);
+
+    cpu.step(&mut ram);
+
+    assert_eq!(cpu.ctr, 0x12345678);
+    assert_eq!(cpu.pc, 0x04);
+}
+
+#[test]
+fn test_mfspr() {
+    let (mut cpu, mut ram) = test_loader();
+
+    cpu.lr = 0x12345678;
+
+    // mflr r4
+    ram.write32(0x00, 0x7C8802A6);
+
+    cpu.step(&mut ram);
+
+    assert_eq!(cpu.gpr[4], 0x12345678);
+    assert_eq!(cpu.pc, 0x04);
+}

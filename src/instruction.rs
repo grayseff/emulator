@@ -37,6 +37,15 @@ pub enum Instruction {
     Stw  { rs: usize, ra: usize, immediate: i32 },
     Stwu { rs: usize, ra: usize, immediate: i32 },
 
+
+    MTSPR { rs: usize, spr: u16 },
+    MFSPR { rd: usize, spr: u16 },
+
+    RLWINM { rs: usize, ra: usize, sh: u8, mb: u8, me: u8, rc: bool },
+    RLWIMI { rs: usize, ra: usize, sh: u8, mb: u8, me: u8, rc: bool },
+    RLWNM  { rs: usize, ra: usize, rb: usize, mb: u8, me: u8, rc: bool },
+
+
     Unknown,
 }
 
@@ -96,7 +105,21 @@ pub fn decode(value: u32) -> Instruction {
                 28 => Instruction::And { rd, ra, rb, rc },
                 316 => Instruction::Xor { rd, ra, rb, rc },
                 444 => Instruction::Or { rd, ra, rb, rc },
+                339 => {
+                    let spr_encoded = ((value >> 11) & 0x3FF) as u16;
+                    let spr = ((spr_encoded & 0x1F) << 5)
+                            | ((spr_encoded >> 5) & 0x1F);
 
+                    Instruction::MFSPR { rd, spr }
+                }
+
+                467 => {
+                    let spr_encoded = ((value >> 11) & 0x3FF) as u16;
+                    let spr = ((spr_encoded & 0x1F) << 5)
+                            | ((spr_encoded >> 5) & 0x1F);
+
+                    Instruction::MTSPR { rs: rd, spr }
+                }
                 _ => Instruction::Unknown,
             }
         }
@@ -153,6 +176,31 @@ pub fn decode(value: u32) -> Instruction {
                 _ => Instruction::Unknown,
             }
         }
+        20 | 21 => {
+            let rs = ((value >> 21) & 0x1F) as usize;
+            let ra = ((value >> 16) & 0x1F) as usize;
+            let sh = ((value >> 11) & 0x1F) as u8;
+            let mb = ((value >> 6) & 0x1F) as u8;
+            let me = ((value >> 1) & 0x1F) as u8;
+            let rc = (value & 0x1) != 0;
+
+            match opcode {
+                20 => Instruction::RLWIMI { rs, ra, sh, mb, me, rc },
+                21 => Instruction::RLWINM { rs, ra, sh, mb, me, rc },
+                _ => unreachable!(),
+            }
+        }
+        23 => {
+            let rs = ((value >> 21) & 0x1F) as usize;
+            let ra = ((value >> 16) & 0x1F) as usize;
+            let rb = ((value >> 11) & 0x1F) as usize;
+            let mb = ((value >> 6) & 0x1F) as u8;
+            let me = ((value >> 1) & 0x1F) as u8;
+            let rc = (value & 0x1) != 0;
+
+            Instruction::RLWNM { rs, ra, rb, mb, me, rc }
+        }
+
         _ => Instruction::Unknown,
     };
 

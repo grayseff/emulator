@@ -74,6 +74,7 @@ impl Cpu {
         }
     }
 
+
 // instruction set
     pub fn execute(&mut self, instruction: Instruction, memory: &mut Memory) {
         match instruction{
@@ -251,6 +252,54 @@ impl Cpu {
 		        self.gpr[ra] = address;
 		    }
 
+            Instruction::MFSPR { rd, spr } => {
+                self.gpr[rd] = match spr {
+                    1 => self.xer,
+                    8 => self.lr,
+                    9 => self.ctr,
+                    _ => todo!("MFSPR {}", spr),
+                };
+            }
+
+            Instruction::MTSPR { rs, spr } => {
+                match spr {
+                    1 => self.xer = self.gpr[rs],
+                    8 => self.lr = self.gpr[rs],
+                    9 => self.ctr = self.gpr[rs],
+                    _ => todo!("MTSPR {}", spr),
+                }
+            }
+        Instruction::RLWINM { rs, ra, sh, mb, me, rc } => {
+            let rotated = self.gpr[rs].rotate_left(sh as u32);
+            let mask = rotate_mask(mb, me);
+
+            self.gpr[ra] = rotated & mask;
+
+            if rc {
+                self.set_cr0(self.gpr[ra]);
+            }
+        }
+        Instruction::RLWNM { rs, ra, rb, mb, me, rc } => {
+            let sh = self.gpr[rb] & 0x1F;
+            let rotated = self.gpr[rs].rotate_left(sh);
+            let mask = rotate_mask(mb, me);
+
+            self.gpr[ra] = rotated & mask;
+
+            if rc {
+                self.set_cr0(self.gpr[ra]);
+            }
+        }
+        Instruction::RLWIMI { rs, ra, sh, mb, me, rc } => {
+            let rotated = self.gpr[rs].rotate_left(sh as u32);
+            let mask = rotate_mask(mb, me);
+
+            self.gpr[ra] = (self.gpr[ra] & !mask) | (rotated & mask);
+
+            if rc {
+                self.set_cr0(self.gpr[ra]);
+            }
+        }
 
 
 
@@ -336,3 +385,19 @@ impl Cpu {
         }
     }
 }
+
+    fn rotate_mask(mb: u8, me: u8) -> u32 {
+        let mut mask = 0u32;
+
+        for bit in 0..32 {
+            if if mb <= me {
+                bit >= mb && bit <= me
+            } else {
+                bit >= mb || bit <= me
+            } {
+                mask |= 1 << (31 - bit);
+            }
+        }
+
+        mask
+    }
