@@ -126,7 +126,8 @@ pub fn decode(value: u32) -> Instruction {
 		16 => {
 		    let bo = ((value >> 21) & 0x1F) as u8;
 		    let bi = ((value >> 16) & 0x1F) as u8;
-		    let bd = ((value >> 2) & 0x3FFF) as i32;
+		    let bd = ((value >> 2) & 0x3FFF) as u32;
+            let bd = ((bd << 18) as i32) >> 18;
 		    let aa = (value & 0x2) != 0;
 		    let lk = (value & 0x1) != 0;
 		
