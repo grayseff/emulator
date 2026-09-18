@@ -41,6 +41,10 @@ impl Cpu {
         let base = if ra == 0 { 0 } else { self.gpr[ra] };
         base.wrapping_add(immediate as u32)
     }
+    fn x_form_address(&self, ra: usize, rb: usize) -> u32 {
+        let base = if ra == 0 { 0 } else { self.gpr[ra] };
+        base.wrapping_add(self.gpr[rb])
+    }
 
     pub fn xer_so(&self) -> bool {
         self.xer & XER_SO != 0
@@ -141,11 +145,18 @@ impl Cpu {
                 self.gpr[rd] = self.gpr[ra] ^ ((immediate as u32) << 16);
             }
 
-            Instruction::Cmp { bf, ra, rb } =>{
+            Instruction::CMP { bf, ra, rb } =>{
                 self.cmp(bf, ra, rb);
             }
             Instruction::CMPL { bf, ra, rb} => {
                 self.cmp_logical(bf, ra, rb);   
+            }
+            Instruction::CMPI { bf, ra, immediate } => {
+                self.cmp_immediate(bf, ra, immediate);
+            }
+
+            Instruction::CMPLI { bf, ra, immediate } => {
+                self.cmp_logical_immediate(bf, ra, immediate);
             }
 
             Instruction::B { li, aa, lk } =>{
@@ -227,7 +238,50 @@ impl Cpu {
 		        self.gpr[rd] = memory.read16(address) as i16 as i32 as u32;
 		        self.gpr[ra] = address;
 		    }
-		    
+            Instruction::Lwzx { rd, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                self.gpr[rd] = memory.read32(address);
+            }
+
+            Instruction::Lwzux { rd, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                self.gpr[rd] = memory.read32(address);
+                self.gpr[ra] = address;
+            }
+
+            Instruction::Lbzx { rd, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                self.gpr[rd] = memory.read8(address) as u32;
+            }
+
+            Instruction::Lbzux { rd, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                self.gpr[rd] = memory.read8(address) as u32;
+                self.gpr[ra] = address;
+            }
+
+            Instruction::Lhzx { rd, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                self.gpr[rd] = memory.read16(address) as u32;
+            }
+
+            Instruction::Lhzux { rd, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                self.gpr[rd] = memory.read16(address) as u32;
+                self.gpr[ra] = address;
+            }
+
+            Instruction::Lhax { rd, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                self.gpr[rd] = memory.read16(address) as i16 as i32 as u32;
+            }
+
+            Instruction::Lhaux { rd, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                self.gpr[rd] = memory.read16(address) as i16 as i32 as u32;
+                self.gpr[ra] = address;
+            }
+                
 		    Instruction::Stb { rs, ra, immediate } => {
 		        let address = self.d_form_address(ra, immediate);
 		        memory.write8(address, self.gpr[rs] as u8);
@@ -251,7 +305,38 @@ impl Cpu {
 		        memory.write16(address, self.gpr[rs] as u16);
 		        self.gpr[ra] = address;
 		    }
+            Instruction::Stwx { rs, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                memory.write32(address, self.gpr[rs]);
+            }
 
+            Instruction::Stwux { rs, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                memory.write32(address, self.gpr[rs]);
+                self.gpr[ra] = address;
+            }
+
+            Instruction::Stbx { rs, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                memory.write8(address, self.gpr[rs] as u8);
+            }
+
+            Instruction::Stbux { rs, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                memory.write8(address, self.gpr[rs] as u8);
+                self.gpr[ra] = address;
+            }
+
+            Instruction::Sthx { rs, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                memory.write16(address, self.gpr[rs] as u16);
+            }
+
+            Instruction::Sthux { rs, ra, rb } => {
+                let address = self.x_form_address(ra, rb);
+                memory.write16(address, self.gpr[rs] as u16);
+                self.gpr[ra] = address;
+            }
             Instruction::MFSPR { rd, spr } => {
                 self.gpr[rd] = match spr {
                     1 => self.xer,
@@ -350,7 +435,37 @@ impl Cpu {
         self.cr &= !(0xF << shift);
         self.cr |= result << shift;
     }   
+    fn cmp_immediate(&mut self, bf: usize, ra: usize, immediate: i32) {
+        let shift = (7 - bf) * 4;
 
+        let result = if (self.gpr[ra] as i32) < immediate {
+            0b1000
+        } else if (self.gpr[ra] as i32) > immediate {
+            0b0100
+        } else {
+            0b0010
+        } | u32::from(self.xer_so());
+
+        self.cr &= !(0xF << shift);
+        self.cr |= result << shift;
+    }
+
+    fn cmp_logical_immediate(&mut self, bf: usize, ra: usize, immediate: u16) {
+        let shift = (7 - bf) * 4;
+
+        let immediate = immediate as u32;
+
+        let result = if self.gpr[ra] < immediate {
+            0b1000
+        } else if self.gpr[ra] > immediate {
+            0b0100
+        } else {
+            0b0010
+        } | u32::from(self.xer_so());
+
+        self.cr &= !(0xF << shift);
+        self.cr |= result << shift;
+    }
     fn branch_condition(&mut self, bo: u8, bi: u8) -> bool {
 	    let ctr_ok = if bo & 0b00100 != 0 {
 	        true

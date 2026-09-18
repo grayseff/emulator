@@ -206,3 +206,26 @@ fn test_mfspr() {
     assert_eq!(cpu.gpr[4], 0x12345678);
     assert_eq!(cpu.pc, 0x04);
 }
+
+#[test]
+fn compare_immediate() {
+    let (mut cpu, mut ram) = test_loader();
+
+    cpu.gpr[3] = (-5i32) as u32;
+    cpu.gpr[4] = 10;
+
+    ram.write32(0x00, 0x2C03FFF6); // cmpwi  cr0,r3,-10
+    ram.write32(0x04, 0x28040014); // cmplwi cr0,r4,20
+
+    cpu.step(&mut ram);
+
+    // -5 > -10
+    assert_eq!((cpu.cr >> 28) & 0xF, 0b0100);
+
+    cpu.step(&mut ram);
+
+    // 10 < 20
+    assert_eq!((cpu.cr >> 28) & 0xF, 0b1000);
+
+    assert_eq!(cpu.pc, 0x08);
+}
