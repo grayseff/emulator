@@ -1,1 +1,8 @@
-/target
+# Build artifacts
+*.o
+/ppc
+
+# Editor files
+*.swp
+*~
+ tags
