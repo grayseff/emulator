@@ -36,7 +36,55 @@ setreg(lua_State *L)
 
 	return 0;
 }
-
+static int
+getcr(lua_State *L)
+{
+	Cpu *cpu = lua_touserdata(L, lua_upvalueindex(1));
+	lua_pushinteger(L, cpu->cr);
+	return 1;
+}
+static int
+setcr(lua_State *L)
+{
+    Cpu *cpu = lua_touserdata(L, lua_upvalueindex(1));
+    cpu->cr = (uint32_t)luaL_checkinteger(L, 1);
+    return 0;
+}
+static int
+getpc(lua_State *L)
+{
+    Cpu *cpu = lua_touserdata(L, lua_upvalueindex(1));
+    lua_pushinteger(L, cpu->pc);
+    return 1;
+}
+static int
+setlr(lua_State *L)
+{
+    Cpu *cpu = lua_touserdata(L, lua_upvalueindex(1));
+    cpu->lr = (uint32_t)luaL_checkinteger(L, 1);
+    return 0;
+}
+static int
+getctr(lua_State *L)
+{
+    Cpu *cpu = lua_touserdata(L, lua_upvalueindex(1));
+    lua_pushinteger(L, cpu->ctr);
+    return 1;
+}
+static int
+setxer(lua_State *L)
+{
+    Cpu *cpu = lua_touserdata(L, lua_upvalueindex(1));
+    cpu->xer = (uint32_t)luaL_checkinteger(L, 1);
+    return 0;
+}
+static int
+resetcpu(lua_State *L)
+{
+    Cpu *cpu = lua_touserdata(L, lua_upvalueindex(1));
+    *cpu = (Cpu){0};
+    return 0;
+}
 static int
 read8(lua_State *L)
 {
@@ -172,6 +220,34 @@ luainit(Cpu *cpu, Memory *mem)
 	lua_pushlightuserdata(L, cpu);
 	lua_pushcclosure(L, setreg, 1);
 	lua_setglobal(L, "setreg");
+
+	lua_pushlightuserdata(L, cpu);
+	lua_pushcclosure(L, getcr, 1);
+	lua_setglobal(L, "getcr");
+
+	lua_pushlightuserdata(L, cpu);
+	lua_pushcclosure(L, setcr, 1);
+	lua_setglobal(L, "setcr");
+
+	lua_pushlightuserdata(L, cpu);
+	lua_pushcclosure(L, getpc, 1);
+	lua_setglobal(L, "getpc");
+
+	lua_pushlightuserdata(L, cpu);
+	lua_pushcclosure(L, setlr, 1);
+	lua_setglobal(L, "setlr");
+
+	lua_pushlightuserdata(L, cpu);
+	lua_pushcclosure(L, getctr, 1);
+	lua_setglobal(L, "getctr");
+
+	lua_pushlightuserdata(L, cpu);
+	lua_pushcclosure(L, setxer, 1);
+	lua_setglobal(L, "setxer");
+
+	lua_pushlightuserdata(L, cpu);
+	lua_pushcclosure(L, resetcpu, 1);
+	lua_setglobal(L, "resetcpu");
 
 	lua_pushlightuserdata(L, mem);
 	lua_pushcclosure(L, read8, 1);

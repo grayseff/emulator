@@ -35,25 +35,12 @@
 !_TAG_KIND_DESCRIPTION!C++	t,typedef	/typedefs/
 !_TAG_KIND_DESCRIPTION!C++	u,union	/union names/
 !_TAG_KIND_DESCRIPTION!C++	v,variable	/variable definitions/
-!_TAG_KIND_DESCRIPTION!Make	I,makefile	/makefiles/
-!_TAG_KIND_DESCRIPTION!Make	m,macro	/macros/
-!_TAG_KIND_DESCRIPTION!Make	t,target	/targets/
-!_TAG_KIND_DESCRIPTION!Markdown	S,subsection	/level 2 sections/
-!_TAG_KIND_DESCRIPTION!Markdown	T,l4subsection	/level 4 sections/
-!_TAG_KIND_DESCRIPTION!Markdown	c,chapter	/chapters/
-!_TAG_KIND_DESCRIPTION!Markdown	h,hashtag	/hashtags/
-!_TAG_KIND_DESCRIPTION!Markdown	n,footnote	/footnotes/
-!_TAG_KIND_DESCRIPTION!Markdown	s,section	/sections/
-!_TAG_KIND_DESCRIPTION!Markdown	t,subsubsection	/level 3 sections/
-!_TAG_KIND_DESCRIPTION!Markdown	u,l5subsection	/level 5 sections/
 !_TAG_OUTPUT_EXCMD	mixed	/number, pattern, mixed, or combineV2/
 !_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
 !_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
 !_TAG_OUTPUT_VERSION	1.1	/current.age/
 !_TAG_PARSER_VERSION!C	1.1	/current.age/
 !_TAG_PARSER_VERSION!C++	2.2	/current.age/
-!_TAG_PARSER_VERSION!Make	1.1	/current.age/
-!_TAG_PARSER_VERSION!Markdown	1.1	/current.age/
 !_TAG_PATTERN_LENGTH_LIMIT	96	/0 for no limit/
 !_TAG_PROC_CWD	/home/grayseff/projects/ppc/	//
 !_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
@@ -73,162 +60,79 @@
 !_TAG_ROLE_DESCRIPTION!C++!module	imported	/imported with "imported ..."/
 !_TAG_ROLE_DESCRIPTION!C++!module	partOwner	/used for specifying a partition/
 !_TAG_ROLE_DESCRIPTION!C++!partition	imported	/imported with "imported ..."/
-!_TAG_ROLE_DESCRIPTION!Make!makefile	included	/included/
-!_TAG_ROLE_DESCRIPTION!Make!makefile	optional	/optionally included/
-1. The machine state these instructions operate on	ppc_instruction_guide.md	/^## 1. The machine state these instructions operate on$/;"	s	chapter:PowerPC Emulator Instruction Guide
-10. Rotate-and-mask instructions	ppc_instruction_guide.md	/^# 10. Rotate-and-mask instructions$/;"	c
-11. UNKNOWN	ppc_instruction_guide.md	/^# 11. UNKNOWN$/;"	c
-12. Reading the suffixes at a glance	ppc_instruction_guide.md	/^# 12. Reading the suffixes at a glance$/;"	c
-13. Notes from reviewing the current execute.c	ppc_instruction_guide.md	/^# 13. Notes from reviewing the current execute.c$/;"	c
-2. Arithmetic instructions	ppc_instruction_guide.md	/^# 2. Arithmetic instructions$/;"	c
-3. Logical instructions	ppc_instruction_guide.md	/^# 3. Logical instructions$/;"	c
-4. Compare instructions	ppc_instruction_guide.md	/^# 4. Compare instructions$/;"	c
-5. Branch instructions	ppc_instruction_guide.md	/^# 5. Branch instructions$/;"	c
-6. Loads - memory to registers	ppc_instruction_guide.md	/^# 6. Loads - memory to registers$/;"	c
-7. Stores - registers to memory	ppc_instruction_guide.md	/^# 7. Stores - registers to memory$/;"	c
-8. Indexed loads and stores	ppc_instruction_guide.md	/^# 8. Indexed loads and stores$/;"	c
-9. Special-purpose register instructions	ppc_instruction_guide.md	/^# 9. Special-purpose register instructions$/;"	c
 ADD	src/instruction.h	/^	ADD,$/;"	e	enum:__anonecb449540103
-ADD - Add	ppc_instruction_guide.md	/^## ADD - Add$/;"	s	chapter:2. Arithmetic instructions
 ADDI	src/instruction.h	/^	ADDI,$/;"	e	enum:__anonecb449540103
-ADDI - Add Immediate	ppc_instruction_guide.md	/^## ADDI - Add Immediate$/;"	s	chapter:2. Arithmetic instructions
 ADDIS	src/instruction.h	/^	ADDIS,$/;"	e	enum:__anonecb449540103
-ADDIS - Add Immediate Shifted	ppc_instruction_guide.md	/^## ADDIS - Add Immediate Shifted$/;"	s	chapter:2. Arithmetic instructions
 AND	src/instruction.h	/^	AND,$/;"	e	enum:__anonecb449540103
-AND - Bitwise AND	ppc_instruction_guide.md	/^## AND - Bitwise AND$/;"	s	chapter:3. Logical instructions
 ANDI	src/instruction.h	/^	ANDI,$/;"	e	enum:__anonecb449540103
-ANDI - AND Immediate	ppc_instruction_guide.md	/^## ANDI - AND Immediate$/;"	s	chapter:3. Logical instructions
 ANDIS	src/instruction.h	/^	ANDIS,$/;"	e	enum:__anonecb449540103
-ANDIS - AND Immediate Shifted	ppc_instruction_guide.md	/^## ANDIS - AND Immediate Shifted$/;"	s	chapter:3. Logical instructions
 B	src/instruction.h	/^	B,$/;"	e	enum:__anonecb449540103
-B - Branch	ppc_instruction_guide.md	/^## B - Branch$/;"	s	chapter:5. Branch instructions
 BC	src/instruction.h	/^	BC,$/;"	e	enum:__anonecb449540103
-BC - Branch Conditional	ppc_instruction_guide.md	/^## BC - Branch Conditional$/;"	s	chapter:5. Branch instructions
 BCLR	src/instruction.h	/^	BCLR,$/;"	e	enum:__anonecb449540103
-BCLR - Branch Conditional to Link Register	ppc_instruction_guide.md	/^## BCLR - Branch Conditional to Link Register$/;"	s	chapter:5. Branch instructions
 BForm	src/instruction.h	/^} BForm;$/;"	t	typeref:struct:__anonecb449540808
 BcForm	src/instruction.h	/^} BcForm;$/;"	t	typeref:struct:__anonecb449540708
 BclrForm	src/instruction.h	/^} BclrForm;$/;"	t	typeref:struct:__anonecb449540908
-CC	Makefile	/^CC = tcc$/;"	m
-CFLAGS	Makefile	/^CFLAGS = -Wall -Wextra -Wpedantic -std=c99 -g$/;"	m
 CMP	src/instruction.h	/^	CMP,$/;"	e	enum:__anonecb449540103
-CMP - Compare Signed	ppc_instruction_guide.md	/^## CMP - Compare Signed$/;"	s	chapter:4. Compare instructions
 CMPI	src/instruction.h	/^	CMPI,$/;"	e	enum:__anonecb449540103
-CMPI - Compare Immediate Signed	ppc_instruction_guide.md	/^## CMPI - Compare Immediate Signed$/;"	s	chapter:4. Compare instructions
 CMPL	src/instruction.h	/^	CMPL,$/;"	e	enum:__anonecb449540103
-CMPL - Compare Logical	ppc_instruction_guide.md	/^## CMPL - Compare Logical$/;"	s	chapter:4. Compare instructions
 CMPLI	src/instruction.h	/^	CMPLI,$/;"	e	enum:__anonecb449540103
-CMPLI - Compare Logical Immediate	ppc_instruction_guide.md	/^## CMPLI - Compare Logical Immediate$/;"	s	chapter:4. Compare instructions
-CR - Condition Register	ppc_instruction_guide.md	/^### CR - Condition Register$/;"	S	section:PowerPC Emulator Instruction Guide""1. The machine state these instructions operate on
-CTR - Count Register	ppc_instruction_guide.md	/^### CTR - Count Register$/;"	S	section:PowerPC Emulator Instruction Guide""1. The machine state these instructions operate on
 CmpForm	src/instruction.h	/^} CmpForm;$/;"	t	typeref:struct:__anonecb449540408
 CmpiForm	src/instruction.h	/^} CmpiForm;$/;"	t	typeref:struct:__anonecb449540508
 Cpu	src/ppc.h	/^} Cpu;$/;"	t	typeref:struct:__anonb5e5dcd50208
 DForm	src/instruction.h	/^} DForm;$/;"	t	typeref:struct:__anonecb449540208
-Effective addresses	ppc_instruction_guide.md	/^### Effective addresses$/;"	S	section:PowerPC Emulator Instruction Guide""1. The machine state these instructions operate on
-General-purpose registers (GPRs)	ppc_instruction_guide.md	/^### General-purpose registers (GPRs)$/;"	S	section:PowerPC Emulator Instruction Guide""1. The machine state these instructions operate on
 INSTRUCTION_H	src/instruction.h	/^#define INSTRUCTION_H$/;"	d
-Immediate values	ppc_instruction_guide.md	/^### Immediate values$/;"	S	section:PowerPC Emulator Instruction Guide""1. The machine state these instructions operate on
 Instruction	src/instruction.h	/^} Instruction;$/;"	t	typeref:struct:__anonecb449540c08
 LBZ	src/instruction.h	/^	LBZ,$/;"	e	enum:__anonecb449540103
-LBZ - Load Byte and Zero	ppc_instruction_guide.md	/^## LBZ - Load Byte and Zero$/;"	s	chapter:6. Loads - memory to registers
 LBZU	src/instruction.h	/^	LBZU,$/;"	e	enum:__anonecb449540103
-LBZU - Load Byte and Zero with Update	ppc_instruction_guide.md	/^## LBZU - Load Byte and Zero with Update$/;"	s	chapter:6. Loads - memory to registers
-LBZUX	ppc_instruction_guide.md	/^## LBZUX$/;"	s	chapter:8. Indexed loads and stores
 LBZUX	src/instruction.h	/^	LBZUX,$/;"	e	enum:__anonecb449540103
-LBZX	ppc_instruction_guide.md	/^## LBZX$/;"	s	chapter:8. Indexed loads and stores
 LBZX	src/instruction.h	/^	LBZX,$/;"	e	enum:__anonecb449540103
-LDLIBS	Makefile	/^LDLIBS = -llua$/;"	m
 LHA	src/instruction.h	/^	LHA,$/;"	e	enum:__anonecb449540103
-LHA - Load Halfword Algebraic	ppc_instruction_guide.md	/^## LHA - Load Halfword Algebraic$/;"	s	chapter:6. Loads - memory to registers
 LHAU	src/instruction.h	/^	LHAU,$/;"	e	enum:__anonecb449540103
-LHAU - Load Halfword Algebraic with Update	ppc_instruction_guide.md	/^## LHAU - Load Halfword Algebraic with Update$/;"	s	chapter:6. Loads - memory to registers
-LHAUX	ppc_instruction_guide.md	/^## LHAUX$/;"	s	chapter:8. Indexed loads and stores
 LHAUX	src/instruction.h	/^	LHAUX,$/;"	e	enum:__anonecb449540103
-LHAX	ppc_instruction_guide.md	/^## LHAX$/;"	s	chapter:8. Indexed loads and stores
 LHAX	src/instruction.h	/^	LHAX,$/;"	e	enum:__anonecb449540103
 LHZ	src/instruction.h	/^	LHZ,$/;"	e	enum:__anonecb449540103
-LHZ - Load Halfword and Zero	ppc_instruction_guide.md	/^## LHZ - Load Halfword and Zero$/;"	s	chapter:6. Loads - memory to registers
 LHZU	src/instruction.h	/^	LHZU,$/;"	e	enum:__anonecb449540103
-LHZU - Load Halfword and Zero with Update	ppc_instruction_guide.md	/^## LHZU - Load Halfword and Zero with Update$/;"	s	chapter:6. Loads - memory to registers
-LHZUX	ppc_instruction_guide.md	/^## LHZUX$/;"	s	chapter:8. Indexed loads and stores
 LHZUX	src/instruction.h	/^	LHZUX,$/;"	e	enum:__anonecb449540103
-LHZX	ppc_instruction_guide.md	/^## LHZX$/;"	s	chapter:8. Indexed loads and stores
 LHZX	src/instruction.h	/^	LHZX,$/;"	e	enum:__anonecb449540103
-LR - Link Register	ppc_instruction_guide.md	/^### LR - Link Register$/;"	S	section:PowerPC Emulator Instruction Guide""1. The machine state these instructions operate on
 LUA_INTERFACE_H	src/lua.h	/^#define LUA_INTERFACE_H$/;"	d
 LWZ	src/instruction.h	/^	LWZ,$/;"	e	enum:__anonecb449540103
-LWZ - Load Word and Zero	ppc_instruction_guide.md	/^## LWZ - Load Word and Zero$/;"	s	chapter:6. Loads - memory to registers
 LWZU	src/instruction.h	/^	LWZU,$/;"	e	enum:__anonecb449540103
-LWZU - Load Word and Zero with Update	ppc_instruction_guide.md	/^## LWZU - Load Word and Zero with Update$/;"	s	chapter:6. Loads - memory to registers
-LWZUX	ppc_instruction_guide.md	/^## LWZUX$/;"	s	chapter:8. Indexed loads and stores
 LWZUX	src/instruction.h	/^	LWZUX,$/;"	e	enum:__anonecb449540103
-LWZX	ppc_instruction_guide.md	/^## LWZX$/;"	s	chapter:8. Indexed loads and stores
 LWZX	src/instruction.h	/^	LWZX,$/;"	e	enum:__anonecb449540103
 MEM_SIZE	src/ppc.c	/^#define MEM_SIZE /;"	d	file:
 MFSPR	src/instruction.h	/^	MFSPR,$/;"	e	enum:__anonecb449540103
-MFSPR - Move From Special-Purpose Register	ppc_instruction_guide.md	/^## MFSPR - Move From Special-Purpose Register$/;"	s	chapter:9. Special-purpose register instructions
 MTSPR	src/instruction.h	/^	MTSPR,$/;"	e	enum:__anonecb449540103
-MTSPR - Move To Special-Purpose Register	ppc_instruction_guide.md	/^## MTSPR - Move To Special-Purpose Register$/;"	s	chapter:9. Special-purpose register instructions
 Memory	src/ppc.h	/^} Memory;$/;"	t	typeref:struct:__anonb5e5dcd50108
-OBJ	Makefile	/^OBJ = $(SRC:.c=.o)$/;"	m
 OR	src/instruction.h	/^	OR,$/;"	e	enum:__anonecb449540103
-OR - Bitwise OR	ppc_instruction_guide.md	/^## OR - Bitwise OR$/;"	s	chapter:3. Logical instructions
 ORI	src/instruction.h	/^	ORI,$/;"	e	enum:__anonecb449540103
-ORI - OR Immediate	ppc_instruction_guide.md	/^## ORI - OR Immediate$/;"	s	chapter:3. Logical instructions
 ORIS	src/instruction.h	/^	ORIS,$/;"	e	enum:__anonecb449540103
-ORIS - OR Immediate Shifted	ppc_instruction_guide.md	/^## ORIS - OR Immediate Shifted$/;"	s	chapter:3. Logical instructions
 Opcode	src/instruction.h	/^} Opcode;$/;"	t	typeref:enum:__anonecb449540103
 Operands	src/instruction.h	/^} Operands;$/;"	t	typeref:union:__anonecb449540b0a
-PC - Program Counter	ppc_instruction_guide.md	/^### PC - Program Counter$/;"	S	section:PowerPC Emulator Instruction Guide""1. The machine state these instructions operate on
 PPC_H	src/ppc.h	/^#define PPC_H$/;"	d
-PowerPC Emulator Instruction Guide	ppc_instruction_guide.md	/^# PowerPC Emulator Instruction Guide$/;"	c
 RLWIMI	src/instruction.h	/^	RLWIMI,$/;"	e	enum:__anonecb449540103
-RLWIMI - Rotate Left Word Immediate then Mask Insert	ppc_instruction_guide.md	/^## RLWIMI - Rotate Left Word Immediate then Mask Insert$/;"	s	chapter:10. Rotate-and-mask instructions
 RLWINM	src/instruction.h	/^	RLWINM,$/;"	e	enum:__anonecb449540103
-RLWINM - Rotate Left Word Immediate then AND with Mask	ppc_instruction_guide.md	/^## RLWINM - Rotate Left Word Immediate then AND with Mask$/;"	s	chapter:10. Rotate-and-mask instructions
 RLWNM	src/instruction.h	/^	RLWNM,$/;"	e	enum:__anonecb449540103
-RLWNM - Rotate Left Word then AND with Mask	ppc_instruction_guide.md	/^## RLWNM - Rotate Left Word then AND with Mask$/;"	s	chapter:10. Rotate-and-mask instructions
-Rc - Record bit	ppc_instruction_guide.md	/^### Rc - Record bit$/;"	S	section:PowerPC Emulator Instruction Guide""1. The machine state these instructions operate on
 RlwForm	src/instruction.h	/^} RlwForm;$/;"	t	typeref:struct:__anonecb449540a08
-SRC	Makefile	/^SRC = $(wildcard src\/*.c)$/;"	m
 STB	src/instruction.h	/^	STB,$/;"	e	enum:__anonecb449540103
-STB - Store Byte	ppc_instruction_guide.md	/^## STB - Store Byte$/;"	s	chapter:7. Stores - registers to memory
 STBU	src/instruction.h	/^	STBU,$/;"	e	enum:__anonecb449540103
-STBU - Store Byte with Update	ppc_instruction_guide.md	/^## STBU - Store Byte with Update$/;"	s	chapter:7. Stores - registers to memory
-STBUX	ppc_instruction_guide.md	/^## STBUX$/;"	s	chapter:8. Indexed loads and stores
 STBUX	src/instruction.h	/^	STBUX,$/;"	e	enum:__anonecb449540103
-STBX	ppc_instruction_guide.md	/^## STBX$/;"	s	chapter:8. Indexed loads and stores
 STBX	src/instruction.h	/^	STBX,$/;"	e	enum:__anonecb449540103
 STH	src/instruction.h	/^	STH,$/;"	e	enum:__anonecb449540103
-STH - Store Halfword	ppc_instruction_guide.md	/^## STH - Store Halfword$/;"	s	chapter:7. Stores - registers to memory
 STHU	src/instruction.h	/^	STHU,$/;"	e	enum:__anonecb449540103
-STHU - Store Halfword with Update	ppc_instruction_guide.md	/^## STHU - Store Halfword with Update$/;"	s	chapter:7. Stores - registers to memory
-STHUX	ppc_instruction_guide.md	/^## STHUX$/;"	s	chapter:8. Indexed loads and stores
 STHUX	src/instruction.h	/^	STHUX,$/;"	e	enum:__anonecb449540103
-STHX	ppc_instruction_guide.md	/^## STHX$/;"	s	chapter:8. Indexed loads and stores
 STHX	src/instruction.h	/^	STHX,$/;"	e	enum:__anonecb449540103
 STW	src/instruction.h	/^	STW,$/;"	e	enum:__anonecb449540103
-STW - Store Word	ppc_instruction_guide.md	/^## STW - Store Word$/;"	s	chapter:7. Stores - registers to memory
 STWU	src/instruction.h	/^	STWU,$/;"	e	enum:__anonecb449540103
-STWU - Store Word with Update	ppc_instruction_guide.md	/^## STWU - Store Word with Update$/;"	s	chapter:7. Stores - registers to memory
-STWUX	ppc_instruction_guide.md	/^## STWUX$/;"	s	chapter:8. Indexed loads and stores
 STWUX	src/instruction.h	/^	STWUX,$/;"	e	enum:__anonecb449540103
-STWX	ppc_instruction_guide.md	/^## STWX$/;"	s	chapter:8. Indexed loads and stores
 STWX	src/instruction.h	/^	STWX,$/;"	e	enum:__anonecb449540103
 SUBF	src/instruction.h	/^	SUBF,$/;"	e	enum:__anonecb449540103
-SUBF - Subtract From	ppc_instruction_guide.md	/^## SUBF - Subtract From$/;"	s	chapter:2. Arithmetic instructions
 SprForm	src/instruction.h	/^} SprForm;$/;"	t	typeref:struct:__anonecb449540608
-UNKNOWN	src/instruction.h	/^    UNKNOWN$/;"	e	enum:__anonecb449540103
-XER and SO	ppc_instruction_guide.md	/^### XER and SO$/;"	S	section:PowerPC Emulator Instruction Guide""1. The machine state these instructions operate on
+UNKNOWN	src/instruction.h	/^	UNKNOWN$/;"	e	enum:__anonecb449540103
 XER_SO	src/execute.c	/^#define XER_SO /;"	d	file:
 XForm	src/instruction.h	/^} XForm;$/;"	t	typeref:struct:__anonecb449540308
 XOR	src/instruction.h	/^	XOR,$/;"	e	enum:__anonecb449540103
-XOR - Exclusive OR	ppc_instruction_guide.md	/^## XOR - Exclusive OR$/;"	s	chapter:3. Logical instructions
 XORI	src/instruction.h	/^	XORI,$/;"	e	enum:__anonecb449540103
-XORI - XOR Immediate	ppc_instruction_guide.md	/^## XORI - XOR Immediate$/;"	s	chapter:3. Logical instructions
 XORIS	src/instruction.h	/^	XORIS,$/;"	e	enum:__anonecb449540103
-XORIS - XOR Immediate Shifted	ppc_instruction_guide.md	/^## XORIS - XOR Immediate Shifted$/;"	s	chapter:3. Logical instructions
 __anonb5e5dcd50108	src/ppc.h	/^typedef struct {$/;"	s
 __anonb5e5dcd50208	src/ppc.h	/^typedef struct {$/;"	s
 __anonecb449540103	src/instruction.h	/^typedef enum {$/;"	g
@@ -256,32 +160,31 @@ bi	src/instruction.h	/^	uint8_t bi;$/;"	m	struct:__anonecb449540708	typeref:type
 bi	src/instruction.h	/^	uint8_t bi;$/;"	m	struct:__anonecb449540908	typeref:typename:uint8_t
 bo	src/instruction.h	/^	uint8_t bo;$/;"	m	struct:__anonecb449540708	typeref:typename:uint8_t
 bo	src/instruction.h	/^	uint8_t bo;$/;"	m	struct:__anonecb449540908	typeref:typename:uint8_t
-branch	src/execute.c	/^branch(Cpu *cpu, uint32_t signed_offset, bool aa, bool lk)$/;"	f	typeref:typename:void	file:
-branch_condition	src/execute.c	/^branch_condition(Cpu *cpu, uint8_t bo, uint8_t bi)$/;"	f	typeref:typename:bool	file:
-clean	Makefile	/^clean:$/;"	t
+branch	src/execute.c	/^branch(Cpu *cpu, uint32_t signedoffset, bool aa)$/;"	f	typeref:typename:void	file:
+branchcondition	src/execute.c	/^branchcondition(Cpu *cpu, uint8_t bo, uint8_t bi)$/;"	f	typeref:typename:bool	file:
 cmp	src/instruction.h	/^	CmpForm cmp;$/;"	m	union:__anonecb449540b0a	typeref:typename:CmpForm
 cmpi	src/instruction.h	/^	CmpiForm cmpi;$/;"	m	union:__anonecb449540b0a	typeref:typename:CmpiForm
-cr	src/ppc.h	/^    uint32_t cr;$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t
-ctr	src/ppc.h	/^    uint32_t ctr;$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t
+cr	src/ppc.h	/^	uint32_t cr;$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t
+ctr	src/ppc.h	/^	uint32_t ctr;$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t
 d	src/instruction.h	/^	DForm d;$/;"	m	union:__anonecb449540b0a	typeref:typename:DForm
-d_form_address	src/execute.c	/^d_form_address(const Cpu *cpu, uint8_t ra, uint16_t immediate)$/;"	f	typeref:typename:uint32_t	file:
-data	src/ppc.h	/^    uint8_t *data;$/;"	m	struct:__anonb5e5dcd50108	typeref:typename:uint8_t *
-decode	src/decode.c	/^Instruction decode(uint32_t value)$/;"	f	typeref:typename:Instruction
+data	src/ppc.h	/^	uint8_t *data;$/;"	m	struct:__anonb5e5dcd50108	typeref:typename:uint8_t *
+decode	src/decode.c	/^decode(uint32_t value)$/;"	f	typeref:typename:Instruction
+dformaddress	src/execute.c	/^dformaddress(const Cpu *cpu, uint8_t ra, uint16_t immediate)$/;"	f	typeref:typename:uint32_t	file:
 execute	src/execute.c	/^execute(Cpu *cpu, Instruction ins, Memory *memory)$/;"	f	typeref:typename:void
 getreg	src/lua.c	/^getreg(lua_State *L)$/;"	f	typeref:typename:int	file:
-gpr	src/ppc.h	/^    uint32_t gpr[32];$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t[32]
+gpr	src/ppc.h	/^	uint32_t gpr[32];$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t[32]
 imm	src/instruction.h	/^	uint16_t imm;$/;"	m	struct:__anonecb449540208	typeref:typename:uint16_t
 imm	src/instruction.h	/^	uint16_t imm;$/;"	m	struct:__anonecb449540508	typeref:typename:uint16_t
 li	src/instruction.h	/^	uint32_t li;$/;"	m	struct:__anonecb449540808	typeref:typename:uint32_t
 lk	src/instruction.h	/^	bool lk;$/;"	m	struct:__anonecb449540708	typeref:typename:bool
 lk	src/instruction.h	/^	bool lk;$/;"	m	struct:__anonecb449540808	typeref:typename:bool
 lk	src/instruction.h	/^	bool lk;$/;"	m	struct:__anonecb449540908	typeref:typename:bool
-lr	src/ppc.h	/^    uint32_t lr;$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t
+lr	src/ppc.h	/^	uint32_t lr;$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t
 luadestroy	src/lua.c	/^luadestroy(lua_State *L)$/;"	f	typeref:typename:void
 luainit	src/lua.c	/^luainit(Cpu *cpu, Memory *mem)$/;"	f	typeref:typename:lua_State *
 luarun	src/lua.c	/^luarun(lua_State *L, const char *file)$/;"	f	typeref:typename:int
 luastep	src/lua.c	/^luastep(lua_State *L)$/;"	f	typeref:typename:int	file:
-main	src/ppc.c	/^main(int argc, char *argv[]) $/;"	f	typeref:typename:int
+main	src/ppc.c	/^main(int argc, char *argv[])$/;"	f	typeref:typename:int
 mb	src/instruction.h	/^	uint8_t mb;$/;"	m	struct:__anonecb449540a08	typeref:typename:uint8_t
 me	src/instruction.h	/^	uint8_t me;$/;"	m	struct:__anonecb449540a08	typeref:typename:uint8_t
 memfree	src/memory.c	/^memfree(Memory *mem)$/;"	f	typeref:typename:void
@@ -292,10 +195,9 @@ memread8	src/memory.c	/^memread8(Memory *mem, uint32_t address)$/;"	f	typeref:ty
 memwrite16	src/memory.c	/^memwrite16(Memory *mem, uint32_t address, uint16_t value)$/;"	f	typeref:typename:void
 memwrite32	src/memory.c	/^memwrite32(Memory *mem, uint32_t address, uint32_t value)$/;"	f	typeref:typename:void
 memwrite8	src/memory.c	/^memwrite8(Memory *mem, uint32_t address, uint8_t value)$/;"	f	typeref:typename:void
-op	src/instruction.h	/^    Operands op;$/;"	m	struct:__anonecb449540c08	typeref:typename:Operands
-opcode	src/instruction.h	/^    Opcode opcode;$/;"	m	struct:__anonecb449540c08	typeref:typename:Opcode
-pc	src/ppc.h	/^    uint32_t pc;$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t
-ppc	Makefile	/^ppc: $(OBJ)$/;"	t
+op	src/instruction.h	/^	Operands op;$/;"	m	struct:__anonecb449540c08	typeref:typename:Operands
+opcode	src/instruction.h	/^	Opcode opcode;$/;"	m	struct:__anonecb449540c08	typeref:typename:Opcode
+pc	src/ppc.h	/^	uint32_t pc;$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t
 ra	src/instruction.h	/^	uint8_t ra;$/;"	m	struct:__anonecb449540208	typeref:typename:uint8_t
 ra	src/instruction.h	/^	uint8_t ra;$/;"	m	struct:__anonecb449540308	typeref:typename:uint8_t
 ra	src/instruction.h	/^	uint8_t ra;$/;"	m	struct:__anonecb449540408	typeref:typename:uint8_t
@@ -310,27 +212,26 @@ read16	src/lua.c	/^read16(lua_State *L)$/;"	f	typeref:typename:int	file:
 read32	src/lua.c	/^read32(lua_State *L)$/;"	f	typeref:typename:int	file:
 read8	src/lua.c	/^read8(lua_State *L)$/;"	f	typeref:typename:int	file:
 rlw	src/instruction.h	/^	RlwForm rlw;$/;"	m	union:__anonecb449540b0a	typeref:typename:RlwForm
-rotate_left32	src/execute.c	/^rotate_left32(uint32_t value, uint8_t shift)$/;"	f	typeref:typename:uint32_t	file:
-rotate_mask	src/execute.c	/^rotate_mask(uint8_t mb, uint8_t me)$/;"	f	typeref:typename:uint32_t	file:
+rotateleft32	src/execute.c	/^rotateleft32(uint32_t value, uint8_t shift)$/;"	f	typeref:typename:uint32_t	file:
+rotatemask	src/execute.c	/^rotatemask(uint8_t mb, uint8_t me)$/;"	f	typeref:typename:uint32_t	file:
 rs	src/instruction.h	/^	uint8_t rs;$/;"	m	struct:__anonecb449540a08	typeref:typename:uint8_t
 rx	src/instruction.h	/^	uint8_t rx;$/;"	m	struct:__anonecb449540208	typeref:typename:uint8_t
+rx	src/instruction.h	/^	uint8_t rx;$/;"	m	struct:__anonecb449540608	typeref:typename:uint8_t
 rx	src/instruction.h	/^	uint8_t rx;$/;"	m	struct:__anonecb449540a08	typeref:typename:uint8_t
-rx	src/instruction.h	/^    uint8_t rx;$/;"	m	struct:__anonecb449540608	typeref:typename:uint8_t
-set_compare	src/execute.c	/^set_compare(Cpu *cpu, uint8_t bf, bool less, bool greater)$/;"	f	typeref:typename:void	file:
-set_cr0	src/execute.c	/^set_cr0(Cpu *cpu, uint32_t result)$/;"	f	typeref:typename:void	file:
-set_cr_field	src/execute.c	/^set_cr_field(Cpu *cpu, uint8_t bf, uint32_t value)$/;"	f	typeref:typename:void	file:
+setcompare	src/execute.c	/^setcompare(Cpu *cpu, uint8_t bf, bool less, bool greater)$/;"	f	typeref:typename:void	file:
+setcr0	src/execute.c	/^setcr0(Cpu *cpu, uint32_t result)$/;"	f	typeref:typename:void	file:
+setcrfield	src/execute.c	/^setcrfield(Cpu *cpu, uint8_t bf, uint32_t value)$/;"	f	typeref:typename:void	file:
 setreg	src/lua.c	/^setreg(lua_State *L)$/;"	f	typeref:typename:int	file:
-sign_extend14	src/execute.c	/^sign_extend14(uint16_t value)$/;"	f	typeref:typename:uint32_t	file:
-sign_extend16	src/execute.c	/^sign_extend16(uint16_t value)$/;"	f	typeref:typename:uint32_t	file:
-sign_extend24	src/execute.c	/^sign_extend24(uint32_t value)$/;"	f	typeref:typename:uint32_t	file:
-signed_less	src/execute.c	/^signed_less(uint32_t left, uint32_t right)$/;"	f	typeref:typename:bool	file:
-size	src/ppc.h	/^    size_t size;$/;"	m	struct:__anonb5e5dcd50108	typeref:typename:size_t
+signextend14	src/execute.c	/^signextend14(uint16_t value)$/;"	f	typeref:typename:uint32_t	file:
+signextend16	src/execute.c	/^signextend16(uint16_t value)$/;"	f	typeref:typename:uint32_t	file:
+signextend24	src/execute.c	/^signextend24(uint32_t value)$/;"	f	typeref:typename:uint32_t	file:
+size	src/ppc.h	/^	size_t size;$/;"	m	struct:__anonb5e5dcd50108	typeref:typename:size_t
 spr	src/instruction.h	/^	SprForm spr;$/;"	m	union:__anonecb449540b0a	typeref:typename:SprForm
-spr	src/instruction.h	/^    uint16_t spr;$/;"	m	struct:__anonecb449540608	typeref:typename:uint16_t
+spr	src/instruction.h	/^	uint16_t spr;$/;"	m	struct:__anonecb449540608	typeref:typename:uint16_t
 step	src/ppc.c	/^step(Cpu *cpu, Memory *mem)$/;"	f	typeref:typename:int
 write16	src/lua.c	/^write16(lua_State *L)$/;"	f	typeref:typename:int	file:
 write32	src/lua.c	/^write32(lua_State *L)$/;"	f	typeref:typename:int	file:
 write8	src/lua.c	/^write8(lua_State *L)$/;"	f	typeref:typename:int	file:
 x	src/instruction.h	/^	XForm x;$/;"	m	union:__anonecb449540b0a	typeref:typename:XForm
-x_form_address	src/execute.c	/^x_form_address(const Cpu *cpu, uint8_t ra, uint8_t rb)$/;"	f	typeref:typename:uint32_t	file:
-xer	src/ppc.h	/^    uint32_t xer;$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t
+xer	src/ppc.h	/^	uint32_t xer;$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t
+xformaddress	src/execute.c	/^xformaddress(const Cpu *cpu, uint8_t ra, uint8_t rb)$/;"	f	typeref:typename:uint32_t	file:

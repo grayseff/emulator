@@ -14,3 +14,13 @@ clean:
 	rm -f $(OBJ) ppc
 
 .PHONY: clean
+
+.PHONY: test
+
+test: ppc
+	@set -e; \
+	for file in tests/*.lua; do \
+		printf 'testing %s ...' "$$file"; \
+		./ppc "$$file"; \
+		echo OK; \
+	done
