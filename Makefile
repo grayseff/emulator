@@ -1,7 +1,7 @@
 CC = gcc
 
 CPPFLAGS = -I/usr/include/lua5.4
-CFLAGS = -O2 -Wall -Wextra
+CFLAGS = -std=c99 -pedantic -O2 -Wall -Wextra
 LDFLAGS = -static -L/usr/lib/lua5.4
 LDLIBS = -llua -lm
 
