@@ -1,8 +1,9 @@
-CC = cproc
+CC = gcc
 
 CPPFLAGS = -I/usr/include/lua5.4
-LDFLAGS = -L/usr/lib/lua5.4
-LDLIBS = -llua
+CFLAGS = -O2 -Wall -Wextra
+LDFLAGS = -static -L/usr/lib/lua5.4
+LDLIBS = -llua -lm
 
 SRC = $(wildcard src/*.c)
 OBJ = $(SRC:.c=.o)

@@ -1,8 +1,8 @@
 -- Initial register state
-setreg(20, 50)
-setreg(5, 25)
-setreg(21, 0xA)
-setreg(22, 0xC)
+cpu.gpr[20] = 50
+cpu.gpr[5] = 25
+cpu.gpr[21] = 0xA
+cpu.gpr[22] = 0xC
 
 -- Register logical operations
 write32(0, 0x7EA8B038) -- and r8,r21,r22
@@ -27,20 +27,20 @@ for i = 1, 10 do
     assert(step() == 0)
 end
 
-assert(getreg(8) == 8)
-assert(getreg(9) == 14)
-assert(getreg(10) == 6)
-assert(getreg(11) == 62)
-assert(getreg(12) == 786482)
-assert(getreg(13) == 62)
-assert(getreg(14) == 786482)
+assert(cpu.gpr[8] == 8)
+assert(cpu.gpr[9] == 14)
+assert(cpu.gpr[10] == 6)
+assert(cpu.gpr[11] == 62)
+assert(cpu.gpr[12] == 786482)
+assert(cpu.gpr[13] == 62)
+assert(cpu.gpr[14] == 786482)
 
-assert(getcr() == 0x84200000)
+assert(cpu.cr == 0x84200000)
 -- ANDI.
 assert(step() == 0)
-assert(getreg(15) == 50)
-assert((getcr() >> 28) & 0xF == 0x4) -- CR0 = GT
+assert(cpu.gpr[15] == 50)
+assert((cpu.cr >> 28) & 0xF == 0x4) -- CR0 = GT
 -- ANDIS.
 assert(step() == 0)
-assert(getreg(16) == 0)
-assert((getcr() >> 28) & 0xF == 0x2) -- CR0 = EQ
+assert(cpu.gpr[16] == 0)
+assert((cpu.cr >> 28) & 0xF == 0x2) -- CR0 = EQ

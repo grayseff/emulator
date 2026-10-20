@@ -1,6 +1,6 @@
-setreg(1, 0x40)
-setreg(5, 0x12345678)
-setreg(6, 0x0FFF8001)
+cpu.gpr[1] = 0x40
+cpu.gpr[5] = 0x12345678
+cpu.gpr[6] = 0x0FFF8001
 
 write32(0x00, 0x90A10000) -- stw
 write32(0x04, 0x94A10008) -- stwu
@@ -19,8 +19,8 @@ assert(read8(0x4C) == 1)
 assert(read8(0x54) == 1)
 assert(read16(0x56) == 0x8001)
 assert(read16(0x58) == 0x8001)
-assert(getreg(1) == 0x58)
-setreg(1, 0x40)
+assert(cpu.gpr[1] == 0x58)
+cpu.gpr[1] = 0x40
 
 write32(0x18, 0x81010000) -- lwz
 write32(0x1C, 0x85210008) -- lwzu
@@ -35,32 +35,32 @@ for i = 1, 8 do
     assert(step() == 0)
 end
 
-assert(getreg(8) == 0x12345678)
-assert(getreg(9) == 0x12345678)
-assert(getreg(10) == 1)
-assert(getreg(11) == 1)
-assert(getreg(12) == 0x8001)
-assert(getreg(13) == 0x8001)
-assert(getreg(14) == 0xFFFF8001)
-assert(getreg(15) == 0xFFFF8001)
-assert(getreg(1) == 0x58)
+assert(cpu.gpr[8] == 0x12345678)
+assert(cpu.gpr[9] == 0x12345678)
+assert(cpu.gpr[10] == 1)
+assert(cpu.gpr[11] == 1)
+assert(cpu.gpr[12] == 0x8001)
+assert(cpu.gpr[13] == 0x8001)
+assert(cpu.gpr[14] == 0xFFFF8001)
+assert(cpu.gpr[15] == 0xFFFF8001)
+assert(cpu.gpr[1] == 0x58)
 
 resetcpu()
-assert(getreg(1) == 0)
-assert(getreg(5) == 0)
-assert(getreg(6) == 0)
-assert(getcr() == 0)
+assert(cpu.gpr[1] == 0)
+assert(cpu.gpr[5] == 0)
+assert(cpu.gpr[6] == 0)
+assert(cpu.cr == 0)
 
-setreg(1, 0x40)
-setreg(5, 0x12345678)
-setreg(6, 0x0FFF8001)
+cpu.gpr[1] = 0x40
+cpu.gpr[5] = 0x12345678
+cpu.gpr[6] = 0x0FFF8001
 
-setreg(16, 0)
-setreg(17, 8)
-setreg(18, 4)
-setreg(19, 12)
-setreg(20, 2)
-setreg(21, 0xFFFFFFFE)
+cpu.gpr[16] = 0
+cpu.gpr[17] = 8
+cpu.gpr[18] = 4
+cpu.gpr[19] = 12
+cpu.gpr[20] = 2
+cpu.gpr[21] = 0xFFFFFFFE
 
 write32(0x00, 0x7CA1812E) -- stwx
 write32(0x04, 0x7CA1896E) -- stwux
@@ -79,9 +79,9 @@ assert(read8(0x4C) == 1)
 assert(read8(0x54) == 1)
 assert(read16(0x56) == 0x8001)
 assert(read16(0x58) == 0x8001)
-assert(getreg(1) == 0x58)
+assert(cpu.gpr[1] == 0x58)
 
-setreg(1, 0x40)
+cpu.gpr[1] = 0x40
 
 write32(0x18, 0x7D01802E) -- lwzx
 write32(0x1C, 0x7D21886E) -- lwzux
@@ -96,12 +96,12 @@ for i = 1, 8 do
     assert(step() == 0)
 end
 
-assert(getreg(8) == 0x12345678)
-assert(getreg(9) == 0x12345678)
-assert(getreg(10) == 1)
-assert(getreg(11) == 1)
-assert(getreg(12) == 0x8001)
-assert(getreg(13) == 0x8001)
-assert(getreg(14) == 0xFFFF8001)
-assert(getreg(15) == 0xFFFF8001)
-assert(getreg(1) == 0x58)
+assert(cpu.gpr[8] == 0x12345678)
+assert(cpu.gpr[9] == 0x12345678)
+assert(cpu.gpr[10] == 1)
+assert(cpu.gpr[11] == 1)
+assert(cpu.gpr[12] == 0x8001)
+assert(cpu.gpr[13] == 0x8001)
+assert(cpu.gpr[14] == 0xFFFF8001)
+assert(cpu.gpr[15] == 0xFFFF8001)
+assert(cpu.gpr[1] == 0x58)

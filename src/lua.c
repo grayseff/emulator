@@ -2,82 +2,94 @@
 #include <lua.h>
 #include <lauxlib.h>
 #include <lualib.h>
+#include <string.h>
 
 #include "ppc.h"
 
 static int
-getreg(lua_State *L)
+gprindex(lua_State *L)
 {
-	Cpu *cpu;
-	lua_Integer reg;
+	Cpu *cpu = *(Cpu **)lua_touserdata(L, 1);
+	lua_Integer index = luaL_checkinteger(L, 2);
 
-	cpu = lua_touserdata(L, lua_upvalueindex(1));
-	reg = luaL_checkinteger(L, 1);
-	luaL_argcheck(L, reg >= 0 && reg < 32, 1,
-		"register index must be between 0 and 31");
+	if (index < 0 || index >= 32)
+		return luaL_error(L, "invalid GPR index: %lld",
+		(long long)index);
 
-	lua_pushinteger(L, (lua_Integer)cpu->gpr[reg]);
+	lua_pushinteger(L, cpu->gpr[index]);
 	return 1;
 }
 
 static int
-setreg(lua_State *L)
+gprnewindex(lua_State *L)
 {
-	Cpu *cpu;
-	lua_Integer reg;
-	lua_Integer value;
+    Cpu *cpu = *(Cpu **)lua_touserdata(L, 1);
+    lua_Integer index = luaL_checkinteger(L, 2);
 
-	cpu = lua_touserdata(L, lua_upvalueindex(1));
-	reg = luaL_checkinteger(L, 1);
-	luaL_argcheck(L, reg >= 0 && reg < 32, 1,
-		"register index must be between 0 and 31");
-	value = luaL_checkinteger(L, 2);
-	cpu->gpr[reg] = (uint32_t)value;
+    if (index < 0 || index >= 32)
+        return luaL_error(L, "invalid GPR index: %lld",
+            (long long)index);
+
+    cpu->gpr[index] = (uint32_t)luaL_checkinteger(L, 3);
+    return 0;
+}
+
+static int
+cpuindex(lua_State *L)
+{
+	Cpu *cpu = *(Cpu **)lua_touserdata(L,1);
+	const char *key = luaL_checkstring(L,2);
+	if (strcmp(key, "gpr") == 0) {
+	    Cpu **userdata = lua_newuserdata(L, sizeof(Cpu *));
+	    *userdata = cpu;
+
+	    luaL_getmetatable(L, "CpuGpr");
+	    lua_setmetatable(L, -2);
+
+	    return 1;
+	}
+	else if (strcmp(key, "pc") == 0)
+	    lua_pushinteger(L, cpu->pc);
+	else if (strcmp(key, "cr") == 0)
+		lua_pushinteger(L, cpu->cr);
+	else if (strcmp(key, "lr") == 0)
+		lua_pushinteger(L, cpu->lr);
+	else if (strcmp(key, "ctr") == 0)
+		lua_pushinteger(L, cpu->ctr);
+	else if (strcmp(key, "xer") == 0)
+		lua_pushinteger(L, cpu->xer);
+	else
+		return luaL_error(L, "unknown CPU field: %s", key);
+
+	return 1;
+}
+
+static int
+cpunewindex(lua_State *L)
+{
+	Cpu *cpu = *(Cpu **)lua_touserdata(L, 1);
+	const char *key = luaL_checkstring(L, 2);
+	if (strcmp(key, "gpr") == 0)
+	    return luaL_error(L, "cannot replace CPU register array");
+	uint32_t value = (uint32_t)luaL_checkinteger(L, 3);
+
+	if (strcmp(key, "pc") == 0)
+		cpu->pc = value;
+	else if (strcmp(key, "cr") == 0)
+		cpu->cr = value;
+	else if (strcmp(key, "lr") == 0)
+		cpu->lr = value;
+	else if (strcmp(key, "ctr") == 0)
+		cpu->ctr = value;
+	else if (strcmp(key, "xer") == 0)
+		cpu->xer = value;
+	else
+		return luaL_error(L, "unknown CPU field: %s", key);
 
 	return 0;
 }
-static int
-getcr(lua_State *L)
-{
-	Cpu *cpu = lua_touserdata(L, lua_upvalueindex(1));
-	lua_pushinteger(L, cpu->cr);
-	return 1;
-}
-static int
-setcr(lua_State *L)
-{
-    Cpu *cpu = lua_touserdata(L, lua_upvalueindex(1));
-    cpu->cr = (uint32_t)luaL_checkinteger(L, 1);
-    return 0;
-}
-static int
-getpc(lua_State *L)
-{
-    Cpu *cpu = lua_touserdata(L, lua_upvalueindex(1));
-    lua_pushinteger(L, cpu->pc);
-    return 1;
-}
-static int
-setlr(lua_State *L)
-{
-    Cpu *cpu = lua_touserdata(L, lua_upvalueindex(1));
-    cpu->lr = (uint32_t)luaL_checkinteger(L, 1);
-    return 0;
-}
-static int
-getctr(lua_State *L)
-{
-    Cpu *cpu = lua_touserdata(L, lua_upvalueindex(1));
-    lua_pushinteger(L, cpu->ctr);
-    return 1;
-}
-static int
-setxer(lua_State *L)
-{
-    Cpu *cpu = lua_touserdata(L, lua_upvalueindex(1));
-    cpu->xer = (uint32_t)luaL_checkinteger(L, 1);
-    return 0;
-}
+
+
 static int
 resetcpu(lua_State *L)
 {
@@ -85,6 +97,7 @@ resetcpu(lua_State *L)
     *cpu = (Cpu){0};
     return 0;
 }
+
 static int
 read8(lua_State *L)
 {
@@ -212,39 +225,33 @@ luainit(Cpu *cpu, Memory *mem)
 		return NULL;
 
 	luaL_openlibs(L);
+	luaL_newmetatable(L, "Cpu");
 
-	lua_pushlightuserdata(L, cpu);
-	lua_pushcclosure(L, getreg, 1);
-	lua_setglobal(L, "getreg");
+	lua_pushcfunction(L, cpuindex);
+	lua_setfield(L, -2, "__index");
 
-	lua_pushlightuserdata(L, cpu);
-	lua_pushcclosure(L, setreg, 1);
-	lua_setglobal(L, "setreg");
+	lua_pushcfunction(L, cpunewindex);
+	lua_setfield(L, -2, "__newindex");
 
-	lua_pushlightuserdata(L, cpu);
-	lua_pushcclosure(L, getcr, 1);
-	lua_setglobal(L, "getcr");
+	lua_pop(L, 1);
 
-	lua_pushlightuserdata(L, cpu);
-	lua_pushcclosure(L, setcr, 1);
-	lua_setglobal(L, "setcr");
+	Cpu **userdata = lua_newuserdata(L, sizeof(Cpu *));
+	*userdata = cpu;
 
-	lua_pushlightuserdata(L, cpu);
-	lua_pushcclosure(L, getpc, 1);
-	lua_setglobal(L, "getpc");
+	luaL_getmetatable(L, "Cpu");
+	lua_setmetatable(L, -2);
 
-	lua_pushlightuserdata(L, cpu);
-	lua_pushcclosure(L, setlr, 1);
-	lua_setglobal(L, "setlr");
+	lua_setglobal(L, "cpu");
 
-	lua_pushlightuserdata(L, cpu);
-	lua_pushcclosure(L, getctr, 1);
-	lua_setglobal(L, "getctr");
+	luaL_newmetatable(L, "CpuGpr");
 
-	lua_pushlightuserdata(L, cpu);
-	lua_pushcclosure(L, setxer, 1);
-	lua_setglobal(L, "setxer");
+	lua_pushcfunction(L, gprindex);
+	lua_setfield(L, -2, "__index");
 
+	lua_pushcfunction(L, gprnewindex);
+	lua_setfield(L, -2, "__newindex");
+
+	lua_pop(L, 1);
 	lua_pushlightuserdata(L, cpu);
 	lua_pushcclosure(L, resetcpu, 1);
 	lua_setglobal(L, "resetcpu");

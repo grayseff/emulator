@@ -1,6 +1,6 @@
 -- Initial register state
-setreg(20, 50)
-setreg(5, 25)
+cpu.gpr[20] = 50
+cpu.gpr[5] = 25
 -- PowerPC instructions
 
 write32(0x00, 0x7C742A14) -- add   r3,r20,r5
@@ -14,8 +14,8 @@ for i = 1, 5 do
     assert(step() == 0)
 end
 -- Verify results
-assert(getreg(3) == 75)
-assert(getreg(6) == 175)
-assert(getreg(7) == 25)
-assert(getreg(8) == 65586)
-assert((getcr() >> 28) & 0xF == 0x4) -- CR0 = GT
+assert(cpu.gpr[3] == 75)
+assert(cpu.gpr[6] == 175)
+assert(cpu.gpr[7] == 25)
+assert(cpu.gpr[8] == 65586)
+assert((cpu.cr >> 28) & 0xF == 0x4) -- CR0 = GT
