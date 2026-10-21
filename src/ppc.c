@@ -4,25 +4,9 @@
 
 #define MEM_SIZE 1024
 
-int
-step(Cpu *cpu, Memory *mem)
-{
-	uint32_t value;
-	Instruction inst;
+int step (Cpu *, Memory *);
 
-	if (mem->size < sizeof(uint32_t) ||
-		(size_t)cpu->pc > mem->size - sizeof(uint32_t))
-		return 1;
 
-	value = memread32(mem, cpu->pc);
-	inst = decode(value);
-
-	cpu->pc += 4;
-
-	execute(cpu, inst, mem);
-
-	return 0;
-}
 
 int
 main(int argc, char *argv[])
@@ -53,3 +37,24 @@ cleanup:
 
 	return status;
 }
+
+int
+step(Cpu *cpu, Memory *mem)
+{
+	uint32_t value;
+	Instruction inst;
+
+	if (mem->size < sizeof(uint32_t) ||
+		(size_t)cpu->pc > mem->size - sizeof(uint32_t))
+		return 1;
+
+	value = memread32(mem, cpu->pc);
+	inst = decode(value);
+
+	cpu->pc += 4;
+
+	return execute(cpu, inst, mem);
+
+}
+
+

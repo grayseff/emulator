@@ -164,15 +164,18 @@ branch	src/execute.c	/^branch(Cpu *cpu, uint32_t signedoffset, bool aa)$/;"	f	ty
 branchcondition	src/execute.c	/^branchcondition(Cpu *cpu, uint8_t bo, uint8_t bi)$/;"	f	typeref:typename:bool	file:
 cmp	src/instruction.h	/^	CmpForm cmp;$/;"	m	union:__anonecb449540b0a	typeref:typename:CmpForm
 cmpi	src/instruction.h	/^	CmpiForm cmpi;$/;"	m	union:__anonecb449540b0a	typeref:typename:CmpiForm
+cpuindex	src/lua.c	/^cpuindex(lua_State *L)$/;"	f	typeref:typename:int	file:
+cpunewindex	src/lua.c	/^cpunewindex(lua_State *L)$/;"	f	typeref:typename:int	file:
 cr	src/ppc.h	/^	uint32_t cr;$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t
 ctr	src/ppc.h	/^	uint32_t ctr;$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t
 d	src/instruction.h	/^	DForm d;$/;"	m	union:__anonecb449540b0a	typeref:typename:DForm
 data	src/ppc.h	/^	uint8_t *data;$/;"	m	struct:__anonb5e5dcd50108	typeref:typename:uint8_t *
 decode	src/decode.c	/^decode(uint32_t value)$/;"	f	typeref:typename:Instruction
 dformaddress	src/execute.c	/^dformaddress(const Cpu *cpu, uint8_t ra, uint16_t immediate)$/;"	f	typeref:typename:uint32_t	file:
-execute	src/execute.c	/^execute(Cpu *cpu, Instruction ins, Memory *memory)$/;"	f	typeref:typename:void
-getreg	src/lua.c	/^getreg(lua_State *L)$/;"	f	typeref:typename:int	file:
+execute	src/execute.c	/^execute(Cpu *cpu, Instruction ins, Memory *memory)$/;"	f	typeref:typename:int
 gpr	src/ppc.h	/^	uint32_t gpr[32];$/;"	m	struct:__anonb5e5dcd50208	typeref:typename:uint32_t[32]
+gprindex	src/lua.c	/^gprindex(lua_State *L)$/;"	f	typeref:typename:int	file:
+gprnewindex	src/lua.c	/^gprnewindex(lua_State *L)$/;"	f	typeref:typename:int	file:
 imm	src/instruction.h	/^	uint16_t imm;$/;"	m	struct:__anonecb449540208	typeref:typename:uint16_t
 imm	src/instruction.h	/^	uint16_t imm;$/;"	m	struct:__anonecb449540508	typeref:typename:uint16_t
 li	src/instruction.h	/^	uint32_t li;$/;"	m	struct:__anonecb449540808	typeref:typename:uint32_t
@@ -211,6 +214,7 @@ rd	src/instruction.h	/^	uint8_t rd;$/;"	m	struct:__anonecb449540308	typeref:type
 read16	src/lua.c	/^read16(lua_State *L)$/;"	f	typeref:typename:int	file:
 read32	src/lua.c	/^read32(lua_State *L)$/;"	f	typeref:typename:int	file:
 read8	src/lua.c	/^read8(lua_State *L)$/;"	f	typeref:typename:int	file:
+resetcpu	src/lua.c	/^resetcpu(lua_State *L)$/;"	f	typeref:typename:int	file:
 rlw	src/instruction.h	/^	RlwForm rlw;$/;"	m	union:__anonecb449540b0a	typeref:typename:RlwForm
 rotateleft32	src/execute.c	/^rotateleft32(uint32_t value, uint8_t shift)$/;"	f	typeref:typename:uint32_t	file:
 rotatemask	src/execute.c	/^rotatemask(uint8_t mb, uint8_t me)$/;"	f	typeref:typename:uint32_t	file:
@@ -221,7 +225,6 @@ rx	src/instruction.h	/^	uint8_t rx;$/;"	m	struct:__anonecb449540a08	typeref:type
 setcompare	src/execute.c	/^setcompare(Cpu *cpu, uint8_t bf, bool less, bool greater)$/;"	f	typeref:typename:void	file:
 setcr0	src/execute.c	/^setcr0(Cpu *cpu, uint32_t result)$/;"	f	typeref:typename:void	file:
 setcrfield	src/execute.c	/^setcrfield(Cpu *cpu, uint8_t bf, uint32_t value)$/;"	f	typeref:typename:void	file:
-setreg	src/lua.c	/^setreg(lua_State *L)$/;"	f	typeref:typename:int	file:
 signextend14	src/execute.c	/^signextend14(uint16_t value)$/;"	f	typeref:typename:uint32_t	file:
 signextend16	src/execute.c	/^signextend16(uint16_t value)$/;"	f	typeref:typename:uint32_t	file:
 signextend24	src/execute.c	/^signextend24(uint32_t value)$/;"	f	typeref:typename:uint32_t	file:

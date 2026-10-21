@@ -6,124 +6,20 @@
 
 #define XER_SO (1u << 31)
 
-static uint32_t
-signextend16(uint16_t value)
-{
-	if (value & 0x8000u)
-		return 0xffff0000u | value;
-	return value;
-}
+static uint32_t signextend16(uint16_t value);
+static uint32_t signextend24(uint32_t value);
+static uint32_t signextend14(uint16_t value);
+static uint32_t dformaddress(const Cpu *cpu, uint8_t ra, uint16_t immediate);
+static uint32_t xformaddress(const Cpu *cpu, uint8_t ra, uint8_t rb);
+static void setcrfield(Cpu *cpu, uint8_t bf, uint32_t value);
+static void setcr0(Cpu *cpu, uint32_t result);
+static void setcompare(Cpu *cpu, uint8_t bf, bool less, bool greater);
+static bool branchcondition(Cpu *cpu, uint8_t bo, uint8_t bi);
+static void branch(Cpu *cpu, uint32_t signedoffset, bool aa);
+static uint32_t rotateleft32(uint32_t value, uint8_t shift);
+static uint32_t rotatemask(uint8_t mb, uint8_t me);
 
-static uint32_t
-signextend24(uint32_t value)
-{
-	value &= 0x00ffffffu;
-	if (value & 0x00800000u)
-		return value | 0xff000000u;
-	return value;
-}
-
-static uint32_t
-signextend14(uint16_t value)
-{
-	value &= 0x3fffu;
-	if (value & 0x2000u)
-		return (uint32_t)value | 0xffffc000u;
-	return value;
-}
-
-static uint32_t
-dformaddress(const Cpu *cpu, uint8_t ra, uint16_t immediate)
-{
-	uint32_t base = ra == 0 ? 0 : cpu->gpr[ra];
-	return base + signextend16(immediate);
-}
-
-static uint32_t
-xformaddress(const Cpu *cpu, uint8_t ra, uint8_t rb)
-{
-	uint32_t base = ra == 0 ? 0 : cpu->gpr[ra];
-	return base + cpu->gpr[rb];
-}
-
-static void
-setcrfield(Cpu *cpu, uint8_t bf, uint32_t value)
-{
-	uint32_t shift = (7u - bf) * 4u;
-	value |= (cpu->xer & XER_SO) != 0;
-	cpu->cr = (cpu->cr & ~(0xfu << shift)) | (value << shift);
-}
-
-static void
-setcr0(Cpu *cpu, uint32_t result)
-{
-	uint32_t value;
-	if (result & 0x80000000u)
-		value = 0x8;
-	else if (result != 0)
-		value = 0x4;
-	else
-		value = 0x2;
-	setcrfield(cpu, 0, value);
-}
-
-static void
-setcompare(Cpu *cpu, uint8_t bf, bool less, bool greater)
-{
-	setcrfield(cpu, bf, less ? 0x8 : greater ? 0x4 : 0x2);
-}
-
-static bool
-branchcondition(Cpu *cpu, uint8_t bo, uint8_t bi)
-{
-	bool ctrok;
-	bool crok;
-
-	if (bo & 0x04u) {
-		ctrok = true;
-	} else {
-		--cpu->ctr;
-		ctrok = (bo & 0x02u) ? cpu->ctr == 0 : cpu->ctr != 0;
-	}
-
-	uint32_t crbit = (cpu->cr >> (31u - bi)) & 1u;
-	crok = (bo & 0x10u) ? true : crbit == ((bo >> 3) & 1u);
-	return ctrok && crok;
-}
-
-static void
-branch(Cpu *cpu, uint32_t signedoffset, bool aa)
-{
-	uint32_t displacement = signedoffset << 2;
-
-	if (aa)
-		cpu->pc = displacement;
-	else
-		/* PC already points past this instruction. */
-		cpu->pc = cpu->pc - 4u + displacement;
-}
-
-static uint32_t
-rotateleft32(uint32_t value, uint8_t shift)
-{
-	shift &= 0x1fu;
-	if (shift == 0)
-		return value;
-	return (value << shift) | (value >> (32u - shift));
-}
-
-static uint32_t
-rotatemask(uint8_t mb, uint8_t me)
-{
-	uint32_t mask = 0;
-	for (uint8_t bit = 0; bit < 32; ++bit) {
-		if (mb <= me ? bit >= mb && bit <= me : bit >= mb || bit <= me)
-			mask |= 1u << (31u - bit);
-	}
-	return mask;
-}
-
-void
+int
 execute(Cpu *cpu, Instruction ins, Memory *memory)
 {
 	/* The caller advances PC before execution. */
@@ -416,7 +312,7 @@ execute(Cpu *cpu, Instruction ins, Memory *memory)
 		default:
 			fprintf(stderr, "unsupported MFSPR number: %u\n",
 				(unsigned)ins.op.spr.spr);
-			abort();
+			return 2;
 		}
 		break;
 
@@ -428,7 +324,7 @@ execute(Cpu *cpu, Instruction ins, Memory *memory)
 		default:
 			fprintf(stderr, "unsupported MTSPR number: %u\n",
 				(unsigned)ins.op.spr.spr);
-			abort();
+			return 2;
 		}
 		break;
 
@@ -461,6 +357,126 @@ execute(Cpu *cpu, Instruction ins, Memory *memory)
 	case UNKNOWN:
 		/* TODO: Raise an illegal-instruction exception. */
 		puts("unknown instruction:");
-		break;
+		return 2;
 	}
+	return 0;
 }
+
+static uint32_t
+signextend16(uint16_t value)
+{
+	if (value & 0x8000u)
+		return 0xffff0000u | value;
+	return value;
+}
+
+static uint32_t
+signextend24(uint32_t value)
+{
+	value &= 0x00ffffffu;
+	if (value & 0x00800000u)
+		return value | 0xff000000u;
+	return value;
+}
+
+static uint32_t
+signextend14(uint16_t value)
+{
+	value &= 0x3fffu;
+	if (value & 0x2000u)
+		return (uint32_t)value | 0xffffc000u;
+	return value;
+}
+
+static uint32_t
+dformaddress(const Cpu *cpu, uint8_t ra, uint16_t immediate)
+{
+	uint32_t base = ra == 0 ? 0 : cpu->gpr[ra];
+	return base + signextend16(immediate);
+}
+
+static uint32_t
+xformaddress(const Cpu *cpu, uint8_t ra, uint8_t rb)
+{
+	uint32_t base = ra == 0 ? 0 : cpu->gpr[ra];
+	return base + cpu->gpr[rb];
+}
+
+static void
+setcrfield(Cpu *cpu, uint8_t bf, uint32_t value)
+{
+	uint32_t shift = (7u - bf) * 4u;
+	value |= (cpu->xer & XER_SO) != 0;
+	cpu->cr = (cpu->cr & ~(0xfu << shift)) | (value << shift);
+}
+
+static void
+setcr0(Cpu *cpu, uint32_t result)
+{
+	uint32_t value;
+	if (result & 0x80000000u)
+		value = 0x8;
+	else if (result != 0)
+		value = 0x4;
+	else
+		value = 0x2;
+	setcrfield(cpu, 0, value);
+}
+
+static void
+setcompare(Cpu *cpu, uint8_t bf, bool less, bool greater)
+{
+	setcrfield(cpu, bf, less ? 0x8 : greater ? 0x4 : 0x2);
+}
+
+static bool
+branchcondition(Cpu *cpu, uint8_t bo, uint8_t bi)
+{
+	bool ctrok;
+	bool crok;
+
+	if (bo & 0x04u) {
+		ctrok = true;
+	} else {
+		--cpu->ctr;
+		ctrok = (bo & 0x02u) ? cpu->ctr == 0 : cpu->ctr != 0;
+	}
+
+	uint32_t crbit = (cpu->cr >> (31u - bi)) & 1u;
+	crok = (bo & 0x10u) ? true : crbit == ((bo >> 3) & 1u);
+	return ctrok && crok;
+}
+
+static void
+branch(Cpu *cpu, uint32_t signedoffset, bool aa)
+{
+	uint32_t displacement = signedoffset << 2;
+
+	if (aa)
+		cpu->pc = displacement;
+	else
+		/* PC already points past this instruction. */
+		cpu->pc = cpu->pc - 4u + displacement;
+}
+
+static uint32_t
+rotateleft32(uint32_t value, uint8_t shift)
+{
+	shift &= 0x1fu;
+	if (shift == 0)
+		return value;
+	return (value << shift) | (value >> (32u - shift));
+}
+
+static uint32_t
+rotatemask(uint8_t mb, uint8_t me)
+{
+	uint32_t mask = 0;
+	for (uint8_t bit = 0; bit < 32; ++bit) {
+		if (mb <= me ? bit >= mb && bit <= me : bit >= mb || bit <= me)
+			mask |= 1u << (31u - bit);
+	}
+	return mask;
+}
+
+

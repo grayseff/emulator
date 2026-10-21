@@ -6,13 +6,19 @@ LDFLAGS = -static -L/usr/lib/lua5.4
 LDLIBS = -llua -lm
 
 SRC = $(wildcard src/*.c)
-OBJ = $(SRC:.c=.o)
+OBJ = $(patsubst src/%.c,build/%.o,$(SRC))
 
 ppc: $(OBJ)
-	$(CC) $(OBJ) -o $@ $(LDFLAGS) $(LDLIBS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJ) $(LDLIBS)
+
+build/%.o: src/%.c | build
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
+
+build:
+	mkdir -p build
 
 clean:
-	rm -f $(OBJ) ppc
+	rm -rf build ppc
 
 .PHONY: clean
 

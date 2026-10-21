@@ -1,8 +1,8 @@
 # Build artifacts
-*.o
+/build/
 /ppc
 
 # Editor files
 *.swp
 *~
- tags
+tags
