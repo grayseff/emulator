@@ -18,6 +18,26 @@ static bool branchcondition(Cpu *cpu, uint8_t bo, uint8_t bi);
 static void branch(Cpu *cpu, uint32_t signedoffset, bool aa);
 static uint32_t rotateleft32(uint32_t value, uint8_t shift);
 static uint32_t rotatemask(uint8_t mb, uint8_t me);
+int execute(Cpu *, Instruction, Memory *);
+
+
+int
+step(Cpu *cpu, Memory *mem)
+{
+	uint32_t value;
+	Instruction inst;
+
+	if (mem->size < sizeof(uint32_t) ||
+		(size_t)cpu->pc > mem->size - sizeof(uint32_t))
+		return 1;
+
+	value = memread32(mem, cpu->pc);
+	inst = decode(value);
+
+	cpu->pc += 4;
+
+	return execute(cpu, inst, mem);
+}
 
 int
 execute(Cpu *cpu, Instruction ins, Memory *memory)

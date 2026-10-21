@@ -1,33 +1,28 @@
 CC = gcc
 
-CPPFLAGS = -I/usr/include/lua5.4
 CFLAGS = -std=c99 -pedantic -O2 -Wall -Wextra
-LDFLAGS = -static -L/usr/lib/lua5.4
-LDLIBS = -llua -lm
+LDFLAGS = -static
 
 SRC = $(wildcard src/*.c)
 OBJ = $(patsubst src/%.c,build/%.o,$(SRC))
+CORE = $(filter-out build/ppc.o,$(OBJ))
 
 ppc: $(OBJ)
-	$(CC) $(LDFLAGS) -o $@ $(OBJ) $(LDLIBS)
+	$(CC) $(LDFLAGS) -o $@ $(OBJ)
+
+build/ctests: tests/ctests.c $(CORE) | build
+	$(CC) $(CFLAGS) -Isrc $(LDFLAGS) -o $@ $< $(CORE)
 
 build/%.o: src/%.c | build
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 build:
 	mkdir -p build
 
+test: build/ctests
+	./build/ctests
+
 clean:
 	rm -rf build ppc
 
-.PHONY: clean
-
-.PHONY: test
-
-test: ppc
-	@set -e; \
-	for file in tests/*.lua; do \
-		printf 'testing %s ...' "$$file"; \
-		./ppc "$$file"; \
-		echo OK; \
-	done
+.PHONY: test clean
