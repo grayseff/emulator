@@ -22,6 +22,8 @@ static int write8(lua_State *);
 static int write16(lua_State *);
 static int write32(lua_State *);
 
+/* Function calls */
+static int luastep(lua_State *);
 
 lua_State *
 luainit(Cpu *cpu, Memory *mem)
@@ -109,26 +111,27 @@ luarun(lua_State *L, const char *file)
 	return status;
 }
 
-static int
-luastep(lua_State *L)
-{
-	Cpu *cpu;
-	Memory *mem;
-
-	cpu = lua_touserdata(L, lua_upvalueindex(1));
-	mem = lua_touserdata(L, lua_upvalueindex(2));
-	int status = step(cpu, mem);
-	lua_pushinteger(L, status);
-
-	return 1;
-}
-
 void
 luadestroy(lua_State *L)
 {
 	lua_close(L);
 }
 
+
+static int
+luastep(lua_State *L)
+{
+	int status;
+	Cpu *cpu;
+	Memory *mem;
+
+	cpu = lua_touserdata(L, lua_upvalueindex(1));
+	mem = lua_touserdata(L, lua_upvalueindex(2));
+	status = step(cpu, mem);
+	lua_pushinteger(L, status);
+
+	return 1;
+}
 
 static int
 resetcpu(lua_State *L)
