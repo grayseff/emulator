@@ -41,7 +41,7 @@ void memwrite32(Memory *, uint32_t, uint32_t);
 /*---------------------decode/exec-----------------------*/
 /*------------------------------------------------------*/
 
-int pefload(const char *);
+int pefload(const char *, Memory *);
 int step(Cpu *, Memory *);
 
 #endif
