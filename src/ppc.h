@@ -41,9 +41,7 @@ void memwrite32(Memory *, uint32_t, uint32_t);
 /*---------------------decode/exec-----------------------*/
 /*------------------------------------------------------*/
 
-Instruction decode(uint32_t value);
-/* execute expects PC to point past the current instruction. */
-int execute(Cpu *, Instruction, Memory *);
-/* Returns 0 after stepping, or 1 when PC is outside readable memory. */
+int pefload(const char *);
 int step(Cpu *, Memory *);
+
 #endif
