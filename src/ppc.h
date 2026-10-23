@@ -1,10 +1,13 @@
 #ifndef PPC_H
 #define PPC_H
 
-#include <stdint.h>
 #include <stdlib.h>
-
+#include <limits.h>
 #include "instruction.h"
+
+#if CHAR_BIT != 8 || USHRT_MAX !=0xffffU || UINT_MAX != 0xffffffffU
+#error Unsupported integer widths
+#endif
 /*------------------------------------------------------*/
 /*------------------------Structs-----------------------*/
 /*------------------------------------------------------*/

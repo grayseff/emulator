@@ -309,8 +309,8 @@ execute(Cpu *cpu, Instruction ins, Memory *memory)
 	case CMP: {
 		unsigned int left = cpu->gpr[ins.op.cmp.ra];
 		unsigned int right = cpu->gpr[ins.op.cmp.rb];
-		setcompare(cpu, ins.op.cmp.bf, (int32_t)left < (int32_t)right,
-			(int32_t)left > (int32_t)right);
+		setcompare(cpu, ins.op.cmp.bf, (int)left < (int)right,
+			(int)left > (int)right);
 		break;
 	}
 
@@ -324,8 +324,8 @@ execute(Cpu *cpu, Instruction ins, Memory *memory)
 	case CMPI: {
 		unsigned int left = cpu->gpr[ins.op.cmpi.ra];
 		unsigned int right = signextend16(ins.op.cmpi.imm);
-		setcompare(cpu, ins.op.cmpi.bf, (int32_t)left < (int32_t)right,
-			(int32_t)left > (int32_t)right);
+		setcompare(cpu, ins.op.cmpi.bf, (int)left < (int)right,
+			(int)left > (int)right);
 		break;
 	}
 
