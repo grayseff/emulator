@@ -75,62 +75,62 @@ typedef enum {
 } Opcode;
 
 typedef struct {
-	uint8_t rx;
-	uint8_t ra;
-	uint16_t imm;
+	unsigned char rx;
+	unsigned char ra;
+	unsigned short imm;
 } DForm;
 
 typedef struct {
-	uint8_t rd;
-	uint8_t ra;
-	uint8_t rb;
+	unsigned char rd;
+	unsigned char ra;
+	unsigned char rb;
 	bool rc;
 } XForm;
 
 typedef struct {
-	uint8_t bf;
-	uint8_t ra;
-	uint8_t rb;
+	unsigned char bf;
+	unsigned char ra;
+	unsigned char rb;
 } CmpForm;
 
 typedef struct {
-	uint8_t bf;
-	uint8_t ra;
-	uint16_t imm;
+	unsigned char bf;
+	unsigned char ra;
+	unsigned short imm;
 } CmpiForm;
 
 typedef struct {
-	uint8_t rx;
-	uint16_t spr;
+	unsigned char rx;
+	unsigned short spr;
 } SprForm;
 
 typedef struct {
-	uint8_t bo;
-	uint8_t bi;
-	uint16_t bd;
+	unsigned char bo;
+	unsigned char bi;
+	unsigned short bd;
 	bool aa;
 	bool lk;
 } BcForm;
 
 typedef struct {
-	uint32_t li;
+	unsigned int li;
 	bool aa;
 	bool lk;
 } BForm;
 
 typedef struct {
-	uint8_t bo;
-	uint8_t bi;
-	uint8_t bh;
+	unsigned char bo;
+	unsigned char bi;
+	unsigned char bh;
 	bool lk;
 } BclrForm;
 
 typedef struct {
-	uint8_t rs;
-	uint8_t ra;
-	uint8_t rx;
-	uint8_t mb;
-	uint8_t me;
+	unsigned char rs;
+	unsigned char ra;
+	unsigned char rx;
+	unsigned char mb;
+	unsigned char me;
 	bool rc;
 } RlwForm;
 

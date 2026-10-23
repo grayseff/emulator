@@ -6,19 +6,19 @@
 #include "ppc.h"
 
 struct pefsection {
-	uint32_t name;
-	uint32_t address;
-	uint32_t totalsize;
-	uint32_t unpackedsize;
-	uint32_t packedsize;
-	uint32_t offset;
-	uint8_t kind;
-	uint8_t share;
-	uint8_t alignment;
+	unsigned int name;
+	unsigned int sectionaddress;
+	unsigned int totalsize;
+	unsigned int unpackedsize;
+	unsigned int packedsize;
+	unsigned int sectionoffset;
+	unsigned char sectionkind;
+	unsigned char sharekind;
+	unsigned char alignment;
 };
 
-static uint16_t bigend16(const unsigned char *);
-static uint16_t bigend32(const unsigned char *);
+static unsigned short bigend16(const unsigned char *);
+static unsigned int bigend32(const unsigned char *);
 
 int
 pefload(const char *path, Memory *mem)
@@ -28,8 +28,8 @@ pefload(const char *path, Memory *mem)
 	unsigned char header[40];
 	unsigned char section[28];
 
-	uint16_t sections;
-	uint16_t instantiated;
+	unsigned short sections;
+	unsigned short instantiated;
 	int status = -1;
 
 	file = fopen(path, "rb");
@@ -70,7 +70,7 @@ pefload(const char *path, Memory *mem)
 
 	/* read in the section headers */
 
-	for (uint16_t i = 0; i < sections; i++) {
+	for (unsigned short i = 0; i < sections; i++) {
 
 		if (fread(section, 1, sizeof section, file) != sizeof section) {
 			fprintf(stderr, "PEF: failed to read section header\n");
@@ -89,7 +89,7 @@ pefload(const char *path, Memory *mem)
 		
 	}
 
-	for (uint16_t i = 0; i < instantiated; i++) {
+	for (unsigned short i = 0; i < instantiated; i++) {
 		struct pefsection *s = &table[i];
 
 		/* check memory is large enough */
@@ -140,17 +140,17 @@ cleanup:
 	return status;
 }
 
-static uint16_t
+static unsigned short
 bigend16(const unsigned char *p)
 {
-	return ((uint16_t)p[0] << 8) | p[1];
+	return ((unsigned short)p[0] << 8) | p[1];
 }
 
-static uint32_t
+static unsigned int
 bigend32(const unsigned char *p)
 {
-	return ((uint32_t)p[0] << 24)
-		| ((uint_32)p[1] << 16)
-		| ((uint32)p[2] << 8)
-		| (uint32)p[3];
+	return ((unsigned int)p[0] << 24)
+		| ((unsigned int)p[1] << 16)
+		| ((unsigned int)p[2] << 8)
+		| (unsigned int)p[3];
 }

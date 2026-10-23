@@ -6,7 +6,7 @@
 int
 meminit(Memory *mem, size_t size)
 {
-	mem->data = calloc(size, sizeof(uint8_t));
+	mem->data = calloc(size, sizeof(unsigned char));
 	if (mem->data == NULL)
 		return -1;
 	mem->size = size;
@@ -23,41 +23,41 @@ memfree(Memory *mem)
 }
 
 void
-memwrite8(Memory *mem, uint32_t address, uint8_t value)
+memwrite8(Memory *mem, unsigned int address, unsigned char value)
 {
 	mem->data[address] = value;
 }
 
 void
-memwrite16(Memory *mem, uint32_t address, uint16_t value)
+memwrite16(Memory *mem, unsigned int address, unsigned short value)
 {
-	memwrite8(mem, address, (uint8_t)(value >> 8));
-	memwrite8(mem, address + 1, (uint8_t)value);
+	memwrite8(mem, address, (unsigned char)(value >> 8));
+	memwrite8(mem, address + 1, (unsigned char)value);
 }
 
 void
-memwrite32(Memory *mem, uint32_t address, uint32_t value)
+memwrite32(Memory *mem, unsigned int address, unsigned int value)
 {
-	memwrite16(mem, address, (uint16_t)(value >> 16));
-	memwrite16(mem, address + 2, (uint16_t)value);
+	memwrite16(mem, address, (unsigned short)(value >> 16));
+	memwrite16(mem, address + 2, (unsigned short)value);
 }
 
-uint8_t
-memread8(Memory *mem, uint32_t address)
+unsigned char
+memread8(Memory *mem, unsigned int address)
 {
 	return mem->data[address];
 }
 
-uint16_t
-memread16(Memory *mem, uint32_t address)
+unsigned short
+memread16(Memory *mem, unsigned int address)
 {
-	return ((uint16_t)memread8(mem, address) << 8) |
+	return ((unsigned short)memread8(mem, address) << 8) |
 		memread8(mem, address + 1);
 }
 
-uint32_t
-memread32(Memory *mem, uint32_t address)
+unsigned int
+memread32(Memory *mem, unsigned int address)
 {
-	return ((uint32_t)memread16(mem, address) << 16) |
+	return ((unsigned int)memread16(mem, address) << 16) |
 		memread16(mem, address + 2);
 }

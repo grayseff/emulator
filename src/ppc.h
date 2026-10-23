@@ -10,17 +10,17 @@
 /*------------------------------------------------------*/
 
 typedef struct {
-	uint8_t *data;
+	unsigned char *data;
 	size_t size;
 } Memory;
 typedef struct {
-	uint32_t gpr[32];
-	uint32_t pc;
+	unsigned int gpr[32];
+	unsigned int pc;
 
-	uint32_t cr;
-	uint32_t lr;
-	uint32_t ctr;
-	uint32_t xer;
+	unsigned int cr;
+	unsigned int lr;
+	unsigned int ctr;
+	unsigned int xer;
 } Cpu;
 
 /*------------------------------------------------------*/
@@ -29,13 +29,13 @@ typedef struct {
 int meminit(Memory *mem, size_t size);
 void memfree(Memory *mem);
 
-uint8_t memread8(Memory *, uint32_t);
-uint16_t memread16(Memory *, uint32_t);
-uint32_t memread32(Memory *, uint32_t);
+unsigned char memread8(Memory *, unsigned int);
+unsigned short memread16(Memory *, unsigned int);
+unsigned int memread32(Memory *, unsigned int);
 
-void memwrite8(Memory *, uint32_t, uint8_t);
-void memwrite16(Memory *, uint32_t, uint16_t);
-void memwrite32(Memory *, uint32_t, uint32_t);
+void memwrite8(Memory *, unsigned int, unsigned char);
+void memwrite16(Memory *, unsigned int, unsigned short);
+void memwrite32(Memory *, unsigned int, unsigned int);
 
 /*--------------------------------------------------------*/
 /*---------------------decode/exec-----------------------*/

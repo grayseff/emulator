@@ -7,31 +7,31 @@
 
 #define XER_SO (1u << 31)
 
-static Instruction decode(uint32_t);
+static Instruction decode(unsigned int);
 static int execute(Cpu *, Instruction, Memory *);
 
-static uint32_t signextend16(uint16_t value);
-static uint32_t signextend24(uint32_t value);
-static uint32_t signextend14(uint16_t value);
-static uint32_t dformaddress(const Cpu *cpu, uint8_t ra, uint16_t immediate);
-static uint32_t xformaddress(const Cpu *cpu, uint8_t ra, uint8_t rb);
-static void setcrfield(Cpu *cpu, uint8_t bf, uint32_t value);
-static void setcr0(Cpu *cpu, uint32_t result);
-static void setcompare(Cpu *cpu, uint8_t bf, bool less, bool greater);
-static bool branchcondition(Cpu *cpu, uint8_t bo, uint8_t bi);
-static void branch(Cpu *cpu, uint32_t signedoffset, bool aa);
-static uint32_t rotateleft32(uint32_t value, uint8_t shift);
-static uint32_t rotatemask(uint8_t mb, uint8_t me);
+static unsigned int signextend16(unsigned short value);
+static unsigned int signextend24(unsigned int value);
+static unsigned int signextend14(unsigned short value);
+static unsigned int dformaddress(const Cpu *cpu, unsigned char ra, unsigned short immediate);
+static unsigned int xformaddress(const Cpu *cpu, unsigned char ra, unsigned char rb);
+static void setcrfield(Cpu *cpu, unsigned char bf, unsigned int value);
+static void setcr0(Cpu *cpu, unsigned int result);
+static void setcompare(Cpu *cpu, unsigned char bf, bool less, bool greater);
+static bool branchcondition(Cpu *cpu, unsigned char bo, unsigned char bi);
+static void branch(Cpu *cpu, unsigned int signedoffset, bool aa);
+static unsigned int rotateleft32(unsigned int value, unsigned char shift);
+static unsigned int rotatemask(unsigned char mb, unsigned char me);
 
 
 int
 step(Cpu *cpu, Memory *mem)
 {
-	uint32_t value;
+	unsigned int value;
 	Instruction inst;
 
-	if (mem->size < sizeof(uint32_t) ||
-		(size_t)cpu->pc > mem->size - sizeof(uint32_t))
+	if (mem->size < sizeof(unsigned int) ||
+		(size_t)cpu->pc > mem->size - sizeof(unsigned int))
 		return 1;
 
 	value = memread32(mem, cpu->pc);
@@ -43,9 +43,9 @@ step(Cpu *cpu, Memory *mem)
 }
 
 static Instruction
-decode(uint32_t value)
+decode(unsigned int value)
 {
-	uint8_t opcode = (uint8_t)(value >> 26);
+	unsigned char opcode = (unsigned char)(value >> 26);
 	Instruction inst = {0};
 	inst.opcode = UNKNOWN;
 
@@ -53,9 +53,9 @@ decode(uint32_t value)
 	/* D-form immediate arithmetic and logical instructions. */
 	case 14: case 15: case 24: case 25:
 	case 26: case 27: case 28: case 29:
-		inst.op.d.rx = (uint8_t)((value >> 21) & 0x1f);
-		inst.op.d.ra = (uint8_t)((value >> 16) & 0x1f);
-		inst.op.d.imm = (uint16_t)(value & 0xffff);
+		inst.op.d.rx = (unsigned char)((value >> 21) & 0x1f);
+		inst.op.d.ra = (unsigned char)((value >> 16) & 0x1f);
+		inst.op.d.imm = (unsigned short)(value & 0xffff);
 		switch (opcode) {
 		case 14: inst.opcode = ADDI; break;
 		case 15: inst.opcode = ADDIS; break;
@@ -70,19 +70,19 @@ decode(uint32_t value)
 
 	/* Compare-immediate instructions. */
 	case 10: case 11:
-		inst.op.cmpi.bf = (uint8_t)((value >> 23) & 0x7);
-		inst.op.cmpi.ra = (uint8_t)((value >> 16) & 0x1f);
-		inst.op.cmpi.imm = (uint16_t)(value & 0xffff);
+		inst.op.cmpi.bf = (unsigned char)((value >> 23) & 0x7);
+		inst.op.cmpi.ra = (unsigned char)((value >> 16) & 0x1f);
+		inst.op.cmpi.imm = (unsigned short)(value & 0xffff);
 		inst.opcode = (opcode == 10) ? CMPLI : CMPI;
 		break;
 
 	/* Rotate and mask instructions. */
 	case 20: case 21: case 23:
-		inst.op.rlw.rs = (uint8_t)((value >> 21) & 0x1f);
-		inst.op.rlw.ra = (uint8_t)((value >> 16) & 0x1f);
-		inst.op.rlw.rx = (uint8_t)((value >> 11) & 0x1f);
-		inst.op.rlw.mb = (uint8_t)((value >> 6) & 0x1f);
-		inst.op.rlw.me = (uint8_t)((value >> 1) & 0x1f);
+		inst.op.rlw.rs = (unsigned char)((value >> 21) & 0x1f);
+		inst.op.rlw.ra = (unsigned char)((value >> 16) & 0x1f);
+		inst.op.rlw.rx = (unsigned char)((value >> 11) & 0x1f);
+		inst.op.rlw.mb = (unsigned char)((value >> 6) & 0x1f);
+		inst.op.rlw.me = (unsigned char)((value >> 1) & 0x1f);
 		inst.op.rlw.rc = (value & 1) != 0;
 		if (opcode == 20)
 			inst.opcode = RLWIMI;
@@ -102,9 +102,9 @@ decode(uint32_t value)
 
 	/* Conditional branch. */
 	case 16:
-		inst.op.bc.bo = (uint8_t)((value >> 21) & 0x1f);
-		inst.op.bc.bi = (uint8_t)((value >> 16) & 0x1f);
-		inst.op.bc.bd = (uint16_t)((value >> 2) & 0x3fff);
+		inst.op.bc.bo = (unsigned char)((value >> 21) & 0x1f);
+		inst.op.bc.bi = (unsigned char)((value >> 16) & 0x1f);
+		inst.op.bc.bd = (unsigned short)((value >> 2) & 0x3fff);
 		inst.op.bc.aa = ((value >> 1) & 1) != 0;
 		inst.op.bc.lk = (value & 1) != 0;
 		inst.opcode = BC;
@@ -113,9 +113,9 @@ decode(uint32_t value)
 	/* Branch to link register (extended opcode 16). */
 	case 19:
 		if (((value >> 1) & 0x3ff) == 16) {
-			inst.op.bclr.bo = (uint8_t)((value >> 21) & 0x1f);
-			inst.op.bclr.bi = (uint8_t)((value >> 16) & 0x1f);
-			inst.op.bclr.bh = (uint8_t)((value >> 11) & 0x3);
+			inst.op.bclr.bo = (unsigned char)((value >> 21) & 0x1f);
+			inst.op.bclr.bi = (unsigned char)((value >> 16) & 0x1f);
+			inst.op.bclr.bh = (unsigned char)((value >> 11) & 0x3);
 			inst.op.bclr.lk = (value & 1) != 0;
 			inst.opcode = BCLR;
 		}
@@ -125,9 +125,9 @@ decode(uint32_t value)
 	case 32: case 33: case 34: case 35:
 	case 36: case 37: case 38: case 39:
 	case 40: case 41: case 42: case 43: case 44: case 45:
-		inst.op.d.rx = (uint8_t)((value >> 21) & 0x1f);
-		inst.op.d.ra = (uint8_t)((value >> 16) & 0x1f);
-		inst.op.d.imm = (uint16_t)(value & 0xffff);
+		inst.op.d.rx = (unsigned char)((value >> 21) & 0x1f);
+		inst.op.d.ra = (unsigned char)((value >> 16) & 0x1f);
+		inst.op.d.imm = (unsigned short)(value & 0xffff);
 		switch (opcode) {
 		case 32: inst.opcode = LWZ; break;
 		case 33: inst.opcode = LWZU; break;
@@ -148,10 +148,10 @@ decode(uint32_t value)
 
 	/* Register-register arithmetic, compares, indexed memory, and SPRs. */
 	case 31: {
-		uint16_t xo = (uint16_t)((value >> 1) & 0x3ff);
-		uint8_t rd = (uint8_t)((value >> 21) & 0x1f);
-		uint8_t ra = (uint8_t)((value >> 16) & 0x1f);
-		uint8_t rb = (uint8_t)((value >> 11) & 0x1f);
+		unsigned short xo = (unsigned short)((value >> 1) & 0x3ff);
+		unsigned char rd = (unsigned char)((value >> 21) & 0x1f);
+		unsigned char ra = (unsigned char)((value >> 16) & 0x1f);
+		unsigned char rb = (unsigned char)((value >> 11) & 0x1f);
 		bool rc = (value & 1) != 0;
 
 		switch (xo) {
@@ -159,7 +159,7 @@ decode(uint32_t value)
 			bool l = ((value >> 21) & 1) != 0;
 			bool reserved = ((value >> 22) & 1) != 0;
 			if (!rc && !l && !reserved) {
-				inst.op.cmp.bf = (uint8_t)((value >> 23) & 0x7);
+				inst.op.cmp.bf = (unsigned char)((value >> 23) & 0x7);
 				inst.op.cmp.ra = ra;
 				inst.op.cmp.rb = rb;
 				inst.opcode = (xo == 0) ? CMP : CMPL;
@@ -186,9 +186,9 @@ decode(uint32_t value)
 		case 407: inst.opcode = STHX; break;
 		case 439: inst.opcode = STHUX; break;
 		case 339: case 467: {
-			uint16_t encoded = (uint16_t)((value >> 11) & 0x3ff);
+			unsigned short encoded = (unsigned short)((value >> 11) & 0x3ff);
 			inst.op.spr.rx = rd;
-			inst.op.spr.spr = (uint16_t)(((encoded & 0x1f) << 5) |
+			inst.op.spr.spr = (unsigned short)(((encoded & 0x1f) << 5) |
 				((encoded >> 5) & 0x1f));
 			inst.opcode = (xo == 339) ? MFSPR : MTSPR;
 			break;
@@ -223,9 +223,9 @@ static int
 execute(Cpu *cpu, Instruction ins, Memory *memory)
 {
 	/* The caller advances PC before execution. */
-	uint32_t address;
-	uint32_t result;
-	uint32_t value;
+	unsigned int address;
+	unsigned int result;
+	unsigned int value;
 
 	switch (ins.opcode) {
 	case ADD:
@@ -269,7 +269,7 @@ execute(Cpu *cpu, Instruction ins, Memory *memory)
 		break;
 
 	case ANDIS:
-		result = cpu->gpr[ins.op.d.rx] & ((uint32_t)ins.op.d.imm << 16);
+		result = cpu->gpr[ins.op.d.rx] & ((unsigned int)ins.op.d.imm << 16);
 		cpu->gpr[ins.op.d.ra] = result;
 		setcr0(cpu, result);
 		break;
@@ -287,7 +287,7 @@ execute(Cpu *cpu, Instruction ins, Memory *memory)
 
 	case ORIS:
 		cpu->gpr[ins.op.d.ra] = cpu->gpr[ins.op.d.rx] |
-			((uint32_t)ins.op.d.imm << 16);
+			((unsigned int)ins.op.d.imm << 16);
 		break;
 
 	case XOR:
@@ -303,35 +303,35 @@ execute(Cpu *cpu, Instruction ins, Memory *memory)
 
 	case XORIS:
 		cpu->gpr[ins.op.d.ra] = cpu->gpr[ins.op.d.rx] ^
-			((uint32_t)ins.op.d.imm << 16);
+			((unsigned int)ins.op.d.imm << 16);
 		break;
 
 	case CMP: {
-		uint32_t left = cpu->gpr[ins.op.cmp.ra];
-		uint32_t right = cpu->gpr[ins.op.cmp.rb];
+		unsigned int left = cpu->gpr[ins.op.cmp.ra];
+		unsigned int right = cpu->gpr[ins.op.cmp.rb];
 		setcompare(cpu, ins.op.cmp.bf, (int32_t)left < (int32_t)right,
 			(int32_t)left > (int32_t)right);
 		break;
 	}
 
 	case CMPL: {
-		uint32_t left = cpu->gpr[ins.op.cmp.ra];
-		uint32_t right = cpu->gpr[ins.op.cmp.rb];
+		unsigned int left = cpu->gpr[ins.op.cmp.ra];
+		unsigned int right = cpu->gpr[ins.op.cmp.rb];
 		setcompare(cpu, ins.op.cmp.bf, left < right, left > right);
 		break;
 	}
 
 	case CMPI: {
-		uint32_t left = cpu->gpr[ins.op.cmpi.ra];
-		uint32_t right = signextend16(ins.op.cmpi.imm);
+		unsigned int left = cpu->gpr[ins.op.cmpi.ra];
+		unsigned int right = signextend16(ins.op.cmpi.imm);
 		setcompare(cpu, ins.op.cmpi.bf, (int32_t)left < (int32_t)right,
 			(int32_t)left > (int32_t)right);
 		break;
 	}
 
 	case CMPLI: {
-		uint32_t left = cpu->gpr[ins.op.cmpi.ra];
-		uint32_t right = ins.op.cmpi.imm;
+		unsigned int left = cpu->gpr[ins.op.cmpi.ra];
+		unsigned int right = ins.op.cmpi.imm;
 		setcompare(cpu, ins.op.cmpi.bf, left < right, left > right);
 		break;
 	}
@@ -412,22 +412,22 @@ execute(Cpu *cpu, Instruction ins, Memory *memory)
 		break;
 	case STB:
 		address = dformaddress(cpu, ins.op.d.ra, ins.op.d.imm);
-		memwrite8(memory, address, (uint8_t)cpu->gpr[ins.op.d.rx]);
+		memwrite8(memory, address, (unsigned char)cpu->gpr[ins.op.d.rx]);
 		break;
 	case STBU:
 		/* TODO: Raise a program exception when RA is 0. */
 		address = dformaddress(cpu, ins.op.d.ra, ins.op.d.imm);
-		memwrite8(memory, address, (uint8_t)cpu->gpr[ins.op.d.rx]);
+		memwrite8(memory, address, (unsigned char)cpu->gpr[ins.op.d.rx]);
 		cpu->gpr[ins.op.d.ra] = address;
 		break;
 	case STH:
 		address = dformaddress(cpu, ins.op.d.ra, ins.op.d.imm);
-		memwrite16(memory, address, (uint16_t)cpu->gpr[ins.op.d.rx]);
+		memwrite16(memory, address, (unsigned short)cpu->gpr[ins.op.d.rx]);
 		break;
 	case STHU:
 		/* TODO: Raise a program exception when RA is 0. */
 		address = dformaddress(cpu, ins.op.d.ra, ins.op.d.imm);
-		memwrite16(memory, address, (uint16_t)cpu->gpr[ins.op.d.rx]);
+		memwrite16(memory, address, (unsigned short)cpu->gpr[ins.op.d.rx]);
 		cpu->gpr[ins.op.d.ra] = address;
 		break;
 
@@ -485,22 +485,22 @@ execute(Cpu *cpu, Instruction ins, Memory *memory)
 		break;
 	case STBX:
 		address = xformaddress(cpu, ins.op.x.ra, ins.op.x.rb);
-		memwrite8(memory, address, (uint8_t)cpu->gpr[ins.op.x.rd]);
+		memwrite8(memory, address, (unsigned char)cpu->gpr[ins.op.x.rd]);
 		break;
 	case STBUX:
 		/* TODO: Raise a program exception when RA is 0. */
 		address = xformaddress(cpu, ins.op.x.ra, ins.op.x.rb);
-		memwrite8(memory, address, (uint8_t)cpu->gpr[ins.op.x.rd]);
+		memwrite8(memory, address, (unsigned char)cpu->gpr[ins.op.x.rd]);
 		cpu->gpr[ins.op.x.ra] = address;
 		break;
 	case STHX:
 		address = xformaddress(cpu, ins.op.x.ra, ins.op.x.rb);
-		memwrite16(memory, address, (uint16_t)cpu->gpr[ins.op.x.rd]);
+		memwrite16(memory, address, (unsigned short)cpu->gpr[ins.op.x.rd]);
 		break;
 	case STHUX:
 		/* TODO: Raise a program exception when RA is 0. */
 		address = xformaddress(cpu, ins.op.x.ra, ins.op.x.rb);
-		memwrite16(memory, address, (uint16_t)cpu->gpr[ins.op.x.rd]);
+		memwrite16(memory, address, (unsigned short)cpu->gpr[ins.op.x.rd]);
 		cpu->gpr[ins.op.x.ra] = address;
 		break;
 
@@ -547,7 +547,7 @@ execute(Cpu *cpu, Instruction ins, Memory *memory)
 
 	case RLWNM:
 		value = cpu->gpr[ins.op.rlw.rx] & 0x1fu;
-		result = rotateleft32(cpu->gpr[ins.op.rlw.rs], (uint8_t)value) &
+		result = rotateleft32(cpu->gpr[ins.op.rlw.rs], (unsigned char)value) &
 			rotatemask(ins.op.rlw.mb, ins.op.rlw.me);
 		cpu->gpr[ins.op.rlw.ra] = result;
 		if (ins.op.rlw.rc)
@@ -562,16 +562,16 @@ execute(Cpu *cpu, Instruction ins, Memory *memory)
 	return 0;
 }
 
-static uint32_t
-signextend16(uint16_t value)
+static unsigned int
+signextend16(unsigned short value)
 {
 	if (value & 0x8000u)
 		return 0xffff0000u | value;
 	return value;
 }
 
-static uint32_t
-signextend24(uint32_t value)
+static unsigned int
+signextend24(unsigned int value)
 {
 	value &= 0x00ffffffu;
 	if (value & 0x00800000u)
@@ -579,41 +579,41 @@ signextend24(uint32_t value)
 	return value;
 }
 
-static uint32_t
-signextend14(uint16_t value)
+static unsigned int
+signextend14(unsigned short value)
 {
 	value &= 0x3fffu;
 	if (value & 0x2000u)
-		return (uint32_t)value | 0xffffc000u;
+		return (unsigned int)value | 0xffffc000u;
 	return value;
 }
 
-static uint32_t
-dformaddress(const Cpu *cpu, uint8_t ra, uint16_t immediate)
+static unsigned int
+dformaddress(const Cpu *cpu, unsigned char ra, unsigned short immediate)
 {
-	uint32_t base = ra == 0 ? 0 : cpu->gpr[ra];
+	unsigned int base = ra == 0 ? 0 : cpu->gpr[ra];
 	return base + signextend16(immediate);
 }
 
-static uint32_t
-xformaddress(const Cpu *cpu, uint8_t ra, uint8_t rb)
+static unsigned int
+xformaddress(const Cpu *cpu, unsigned char ra, unsigned char rb)
 {
-	uint32_t base = ra == 0 ? 0 : cpu->gpr[ra];
+	unsigned int base = ra == 0 ? 0 : cpu->gpr[ra];
 	return base + cpu->gpr[rb];
 }
 
 static void
-setcrfield(Cpu *cpu, uint8_t bf, uint32_t value)
+setcrfield(Cpu *cpu, unsigned char bf, unsigned int value)
 {
-	uint32_t shift = (7u - bf) * 4u;
+	unsigned int shift = (7u - bf) * 4u;
 	value |= (cpu->xer & XER_SO) != 0;
 	cpu->cr = (cpu->cr & ~(0xfu << shift)) | (value << shift);
 }
 
 static void
-setcr0(Cpu *cpu, uint32_t result)
+setcr0(Cpu *cpu, unsigned int result)
 {
-	uint32_t value;
+	unsigned int value;
 	if (result & 0x80000000u)
 		value = 0x8;
 	else if (result != 0)
@@ -624,13 +624,13 @@ setcr0(Cpu *cpu, uint32_t result)
 }
 
 static void
-setcompare(Cpu *cpu, uint8_t bf, bool less, bool greater)
+setcompare(Cpu *cpu, unsigned char bf, bool less, bool greater)
 {
 	setcrfield(cpu, bf, less ? 0x8 : greater ? 0x4 : 0x2);
 }
 
 static bool
-branchcondition(Cpu *cpu, uint8_t bo, uint8_t bi)
+branchcondition(Cpu *cpu, unsigned char bo, unsigned char bi)
 {
 	bool ctrok;
 	bool crok;
@@ -642,15 +642,15 @@ branchcondition(Cpu *cpu, uint8_t bo, uint8_t bi)
 		ctrok = (bo & 0x02u) ? cpu->ctr == 0 : cpu->ctr != 0;
 	}
 
-	uint32_t crbit = (cpu->cr >> (31u - bi)) & 1u;
+	unsigned int crbit = (cpu->cr >> (31u - bi)) & 1u;
 	crok = (bo & 0x10u) ? true : crbit == ((bo >> 3) & 1u);
 	return ctrok && crok;
 }
 
 static void
-branch(Cpu *cpu, uint32_t signedoffset, bool aa)
+branch(Cpu *cpu, unsigned int signedoffset, bool aa)
 {
-	uint32_t displacement = signedoffset << 2;
+	unsigned int displacement = signedoffset << 2;
 
 	if (aa)
 		cpu->pc = displacement;
@@ -659,8 +659,8 @@ branch(Cpu *cpu, uint32_t signedoffset, bool aa)
 		cpu->pc = cpu->pc - 4u + displacement;
 }
 
-static uint32_t
-rotateleft32(uint32_t value, uint8_t shift)
+static unsigned int
+rotateleft32(unsigned int value, unsigned char shift)
 {
 	shift &= 0x1fu;
 	if (shift == 0)
@@ -668,11 +668,11 @@ rotateleft32(uint32_t value, uint8_t shift)
 	return (value << shift) | (value >> (32u - shift));
 }
 
-static uint32_t
-rotatemask(uint8_t mb, uint8_t me)
+static unsigned int
+rotatemask(unsigned char mb, unsigned char me)
 {
-	uint32_t mask = 0;
-	for (uint8_t bit = 0; bit < 32; ++bit) {
+	unsigned int mask = 0;
+	for (unsigned char bit = 0; bit < 32; ++bit) {
 		if (mb <= me ? bit >= mb && bit <= me : bit >= mb || bit <= me)
 			mask |= 1u << (31u - bit);
 	}
